@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    <link rel="apple-touch-icon" href="/assets/logo.png">
+    <title>帖子详情 - PlayARG</title>
+    <style id="theme-vars">
+/* PlayARG — Dark geek theme tokens */
+
+:root {
+  /* Core dark surfaces */
+  --playarg-background: #0b0c10;
+  --playarg-foreground: #e8e8ec;
+  --playarg-card: #111318;
+  --playarg-card-foreground: #e8e8ec;
+  --playarg-popover: #151821;
+  --playarg-popover-foreground: #e8e8ec;
+
+  /* Primary accent — cyan/teal glow */
+  --playarg-primary: #00d9ff;
+  --playarg-primary-foreground: #030507;
+  --playarg-primary-subtle: rgba(0, 217, 255, 0.12);
+  --playarg-primary-dim: rgba(0, 217, 255, 0.06);
+
+  /* Muted / secondary */
+  --playarg-muted: #1a1d25;
+  --playarg-muted-foreground: #8a8f98;
+  --playarg-secondary: #1e212b;
+  --playarg-secondary-foreground: #d1d5db;
+
+  /* Borders & inputs */
+  --playarg-border: #2a2e3a;
+  --playarg-input: #2a2e3a;
+  --playarg-ring: rgba(0, 217, 255, 0.45);
+
+  /* Radius */
+  --playarg-radius-small: 4px;
+  --playarg-radius-medium: 8px;
+  --playarg-radius-large: 12px;
+
+  /* State colors */
+  --playarg-state-success: #22c55e;
+  --playarg-state-warning: #f59e0b;
+  --playarg-state-error: #ef4444;
+  --playarg-state-info: #3b82f6;
+
+  /* Code / data */
+  --playarg-code-bg: #0d0f14;
+  --playarg-code-fg: #e8e8ec;
+  --playarg-accent-purple: #a855f7;
+  --playarg-accent-green: #4ade80;
+
+  /* Spacing scale */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 80px;
+
+  /* Typography */
+  --font-sans: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", "Noto Sans SC", monospace;
+
+  /* Shadows */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.15);
+  --shadow-2: 0 8px 24px -8px rgba(0, 217, 255, 0.14);
+  --shadow-3: 0 24px 60px -20px rgba(0, 0, 0, 0.55);
+}
+
+@theme inline {
+  --color-background: var(--playarg-background);
+  --color-foreground: var(--playarg-foreground);
+  --color-card: var(--playarg-card);
+  --color-card-foreground: var(--playarg-card-foreground);
+  --color-popover: var(--playarg-popover);
+  --color-popover-foreground: var(--playarg-popover-foreground);
+  --color-primary: var(--playarg-primary);
+  --color-primary-foreground: var(--playarg-primary-foreground);
+  --color-secondary: var(--playarg-secondary);
+  --color-secondary-foreground: var(--playarg-secondary-foreground);
+  --color-muted: var(--playarg-muted);
+  --color-muted-foreground: var(--playarg-muted-foreground);
+  --color-border: var(--playarg-border);
+  --color-input: var(--playarg-input);
+  --color-ring: var(--playarg-ring);
+  --radius-sm: var(--playarg-radius-small);
+  --radius-md: var(--playarg-radius-medium);
+  --radius-lg: var(--playarg-radius-large);
+}
+
+/* Base */
+html,
+body {
+  font-family: var(--font-sans);
+  background: var(--playarg-background);
+  color: var(--playarg-foreground);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Glow utilities */
+.glow-text {
+  text-shadow: 0 0 18px rgba(0, 217, 255, 0.35);
+}
+
+.glow-border {
+  box-shadow: 0 0 0 1px var(--playarg-border), 0 0 18px rgba(0, 217, 255, 0.12);
+}
+
+/* Scrollbar dark */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--playarg-background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--playarg-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3f4d;
+}
+
+/* Code block base */
+pre,
+code {
+  font-family: var(--font-mono);
+}
+
+    </style>
+    <script src="/assets/tailwind.browser.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--playarg-background);
+    --color-foreground: var(--playarg-foreground);
+    --color-card: var(--playarg-card);
+    --color-card-foreground: var(--playarg-card-foreground);
+    --color-popover: var(--playarg-popover);
+    --color-popover-foreground: var(--playarg-popover-foreground);
+    --color-primary: var(--playarg-primary);
+    --color-primary-foreground: var(--playarg-primary-foreground);
+    --color-secondary: var(--playarg-secondary);
+    --color-secondary-foreground: var(--playarg-secondary-foreground);
+    --color-muted: var(--playarg-muted);
+    --color-muted-foreground: var(--playarg-muted-foreground);
+    --color-border: var(--playarg-border);
+    --color-input: var(--playarg-input);
+    --color-ring: var(--playarg-ring);
+    --radius-sm: var(--playarg-radius-small);
+    --radius-md: var(--playarg-radius-medium);
+    --radius-lg: var(--playarg-radius-large);
+  }
+  @layer base {
+    body { background: var(--playarg-background); color: var(--playarg-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--playarg-background); }
+      .text-background { color: var(--playarg-background); }
+      .border-background { border-color: var(--playarg-background); }
+      .ring-background { --tw-ring-color: var(--playarg-background); }
+      .bg-foreground { background-color: var(--playarg-foreground); }
+      .text-foreground { color: var(--playarg-foreground); }
+      .border-foreground { border-color: var(--playarg-foreground); }
+      .ring-foreground { --tw-ring-color: var(--playarg-foreground); }
+      .bg-card { background-color: var(--playarg-card); }
+      .text-card { color: var(--playarg-card); }
+      .border-card { border-color: var(--playarg-card); }
+      .ring-card { --tw-ring-color: var(--playarg-card); }
+      .bg-card-foreground { background-color: var(--playarg-card-foreground); }
+      .text-card-foreground { color: var(--playarg-card-foreground); }
+      .border-card-foreground { border-color: var(--playarg-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--playarg-card-foreground); }
+      .bg-popover { background-color: var(--playarg-popover); }
+      .text-popover { color: var(--playarg-popover); }
+      .border-popover { border-color: var(--playarg-popover); }
+      .ring-popover { --tw-ring-color: var(--playarg-popover); }
+      .bg-popover-foreground { background-color: var(--playarg-popover-foreground); }
+      .text-popover-foreground { color: var(--playarg-popover-foreground); }
+      .border-popover-foreground { border-color: var(--playarg-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--playarg-popover-foreground); }
+      .bg-primary { background-color: var(--playarg-primary); }
+      .text-primary { color: var(--playarg-primary); }
+      .border-primary { border-color: var(--playarg-primary); }
+      .ring-primary { --tw-ring-color: var(--playarg-primary); }
+      .bg-primary-foreground { background-color: var(--playarg-primary-foreground); }
+      .text-primary-foreground { color: var(--playarg-primary-foreground); }
+      .border-primary-foreground { border-color: var(--playarg-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--playarg-primary-foreground); }
+      .bg-secondary { background-color: var(--playarg-secondary); }
+      .text-secondary { color: var(--playarg-secondary); }
+      .border-secondary { border-color: var(--playarg-secondary); }
+      .ring-secondary { --tw-ring-color: var(--playarg-secondary); }
+      .bg-secondary-foreground { background-color: var(--playarg-secondary-foreground); }
+      .text-secondary-foreground { color: var(--playarg-secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--playarg-secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--playarg-secondary-foreground); }
+      .bg-muted { background-color: var(--playarg-muted); }
+      .text-muted { color: var(--playarg-muted); }
+      .border-muted { border-color: var(--playarg-muted); }
+      .ring-muted { --tw-ring-color: var(--playarg-muted); }
+      .bg-muted-foreground { background-color: var(--playarg-muted-foreground); }
+      .text-muted-foreground { color: var(--playarg-muted-foreground); }
+      .border-muted-foreground { border-color: var(--playarg-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--playarg-muted-foreground); }
+      .bg-border { background-color: var(--playarg-border); }
+      .text-border { color: var(--playarg-border); }
+      .border-border { border-color: var(--playarg-border); }
+      .ring-border { --tw-ring-color: var(--playarg-border); }
+      .bg-input { background-color: var(--playarg-input); }
+      .text-input { color: var(--playarg-input); }
+      .border-input { border-color: var(--playarg-input); }
+      .ring-input { --tw-ring-color: var(--playarg-input); }
+      .bg-ring { background-color: var(--playarg-ring); }
+      .text-ring { color: var(--playarg-ring); }
+      .border-ring { border-color: var(--playarg-ring); }
+      .ring-ring { --tw-ring-color: var(--playarg-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+      .sidebar-active {
+        position: relative;
+        background-color: var(--playarg-primary-dim);
+        color: var(--playarg-primary);
+      }
+      .sidebar-active::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.5rem;
+        bottom: 0.5rem;
+        width: 3px;
+        border-radius: 0 2px 2px 0;
+        background-color: var(--playarg-primary);
+      }
+    </style>
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('playarg_theme');
+          if (t === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            document.documentElement.classList.remove('dark');
+          }
+        } catch(e) {}
+      })();
+    </script>
+</head>
+<body class="min-h-screen font-sans antialiased">
+<!-- Top navigation -->
+<header class="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[var(--playarg-border)] bg-[var(--playarg-background)]/90 backdrop-blur">
+  <div class="flex h-full items-center justify-between px-6">
+    <div class="flex items-center gap-3">
+      <a href="/" data-dom-id="nav-logo" class="flex items-center gap-2 text-lg font-semibold tracking-tight text-[var(--playarg-primary)] glow-text">
+        <img src="/assets/logo.png" class="h-8 w-auto rounded-md" alt="PlayARG" />
+        <span>PlayARG</span>
+      </a>
+    </div>
+        <nav class="flex items-center gap-4">
+      <a href="/rules" class="text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-foreground)]">规则</a>
+      <a href="/sponsors" class="text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-foreground)]">赞助我们</a>
+      <button data-dom-id="nav-search" class="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--playarg-border)] text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+        <i data-lucide="search" class="h-4 w-4"></i>
+      </button>
+      <a href="/messages" data-dom-id="nav-messages" class="relative flex h-9 w-9 items-center justify-center rounded-md border border-[var(--playarg-border)] text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+        <i data-lucide="mail" class="h-4 w-4"></i>
+        <span id="nav-messages-badge" class="absolute -right-1 -top-1 hidden min-w-[16px] rounded-full bg-[var(--playarg-state-error)] px-1 text-[10px] font-medium text-white"></span>
+      </a>
+      <a href="/notifications" data-dom-id="nav-notifications" class="relative flex h-9 w-9 items-center justify-center rounded-md border border-[var(--playarg-border)] text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+        <i data-lucide="bell" class="h-4 w-4"></i>
+        <span id="nav-notifications-badge" class="absolute -right-1 -top-1 hidden min-w-[16px] rounded-full bg-[var(--playarg-state-error)] px-1 text-[10px] font-medium text-white"></span>
+      </a>
+      <div id="auth-root" class="relative"></div>
+    </nav>
+  </div>
+</header>
+
+<!-- Sidebar -->
+<aside class="fixed left-0 top-16 bottom-0 z-40 w-56 border-r border-[var(--playarg-border)] bg-[var(--playarg-card)]">
+  <nav class="flex flex-col gap-1 p-3">
+    <a href="/problems" data-dom-id="sidebar-problems" data-nav-key="problems" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+      <i data-lucide="book-open" class="h-[18px] w-[18px]"></i>
+      <span>题库</span>
+    </a>
+    <a href="/contests" data-dom-id="sidebar-contests" data-nav-key="contests" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+      <i data-lucide="trophy" class="h-[18px] w-[18px]"></i>
+      <span>比赛</span>
+    </a>
+    <a href="/submissions" data-dom-id="sidebar-submissions" data-nav-key="submissions" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+      <i data-lucide="terminal" class="h-[18px] w-[18px]"></i>
+      <span>提交记录</span>
+    </a>
+    <a href="/discussions" data-dom-id="sidebar-discussion" data-nav-key="discussion" class="sidebar-active flex items-center gap-3 rounded-md px-3 py-2.5 pl-4 text-sm transition-colors hover:bg-[var(--playarg-muted)]">
+      <i data-lucide="message-square" class="h-[18px] w-[18px]"></i>
+      <span>讨论</span>
+    </a>
+    <a href="/announcement" data-dom-id="sidebar-announcement" data-nav-key="announcement" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+      <i data-lucide="megaphone" class="h-[18px] w-[18px]"></i>
+      <span>公告</span>
+    </a>
+  </nav>
+</aside>
+
+<!-- Main content frame -->
+<main id="main-content" class="ml-56 min-h-screen pt-16 bg-[var(--playarg-background)]">
+  <div class="p-6 lg:p-8">
+    <div class="mx-auto max-w-4xl">
+      <!-- Breadcrumb -->
+      <div class="mb-4 text-sm text-[var(--playarg-muted-foreground)]">
+        <a href="/discussions" class="text-[var(--playarg-primary)] hover:underline">讨论区</a> / 帖子详情
+      </div>
+
+      <!-- Detail card -->
+      <div id="detail-card" class="rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-6">
+        <div class="animate-pulse space-y-3">
+          <div class="h-5 w-2/3 rounded bg-[var(--playarg-muted)]"></div>
+          <div class="h-4 w-1/3 rounded bg-[var(--playarg-muted)]"></div>
+          <div class="h-24 rounded bg-[var(--playarg-muted)]"></div>
+        </div>
+      </div>
+
+      <!-- Admin edit form -->
+      <div id="admin-edit-form" class="mt-6 hidden rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-6">
+        <h2 class="mb-4 text-lg font-semibold text-[var(--playarg-foreground)]">编辑帖子</h2>
+        <div class="flex flex-col gap-3">
+          <label for="admin-edit-title" class="text-sm font-medium text-[var(--playarg-foreground)]">标题</label>
+          <input id="admin-edit-title" type="text" maxlength="120" class="h-10 w-full rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-3 text-sm text-[var(--playarg-foreground)] placeholder:text-[var(--playarg-muted-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />
+          <label for="admin-edit-content" class="text-sm font-medium text-[var(--playarg-foreground)]">正文</label>
+          <textarea id="admin-edit-content" rows="6" class="w-full resize-y rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-3 py-2 text-sm text-[var(--playarg-foreground)] placeholder:text-[var(--playarg-muted-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]"></textarea>
+          <label for="admin-edit-tags" class="text-sm font-medium text-[var(--playarg-foreground)]">标签（逗号分隔）</label>
+          <input id="admin-edit-tags" type="text" class="h-10 w-full rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-3 text-sm text-[var(--playarg-foreground)] placeholder:text-[var(--playarg-muted-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />
+          <div id="admin-edit-error" class="hidden text-xs text-[var(--playarg-state-error)]"></div>
+          <div class="flex justify-end gap-2">
+            <button id="admin-edit-cancel" class="inline-flex h-9 items-center justify-center rounded-md border border-[var(--playarg-border)] px-4 text-sm text-[var(--playarg-foreground)] transition-colors hover:bg-[var(--playarg-muted)]">取消</button>
+            <button id="admin-edit-save" class="inline-flex h-9 items-center justify-center rounded-md bg-[var(--playarg-primary)] px-4 text-sm font-medium text-[var(--playarg-primary-foreground)] transition-all hover:brightness-110">保存</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Replies section -->
+      <div id="replies-section" class="mt-6 rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-6">
+        <h2 id="replies-heading" class="mb-4 text-lg font-semibold text-[var(--playarg-foreground)]">回复</h2>
+        <div id="replies-list" class="flex flex-col gap-4">
+          <div class="text-sm text-[var(--playarg-muted-foreground)]">加载中…</div>
+        </div>
+      </div>
+
+      <!-- Reply form -->
+      <div class="mt-6">
+        <div id="reply-form" class="flex flex-col gap-3 rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-6">
+          <label for="reply-content" class="text-sm font-medium text-[var(--playarg-foreground)]">发表回复</label>
+          <textarea id="reply-content" rows="4" maxlength="2000" class="w-full resize-y rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-3 py-2 text-sm text-[var(--playarg-foreground)] placeholder:text-[var(--playarg-muted-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" placeholder="写下你的回复…"></textarea>
+          <div id="reply-error" class="hidden text-xs text-[var(--playarg-state-error)]"></div>
+          <div class="flex justify-end">
+            <button id="btn-submit-reply" class="inline-flex items-center justify-center gap-2 rounded-md bg-[var(--playarg-primary)] px-4 py-2 text-sm font-medium text-[var(--playarg-primary-foreground)] transition-all hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]">
+              <i data-lucide="send" class="h-4 w-4"></i>
+              <span>提交回复</span>
+            </button>
+          </div>
+        </div>
+        <div id="reply-login-hint" class="hidden rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-6 text-sm text-[var(--playarg-muted-foreground)]">
+          请先 <a href="/" class="text-[var(--playarg-primary)] hover:underline">登录</a> 后回复
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="ml-56 border-t border-[var(--playarg-border)] bg-[var(--playarg-card)] py-6">
+  <div class="px-8 text-xs text-[var(--playarg-muted-foreground)]">
+    PlayARG © 2026
+  </div>
+</footer>
+
+<script src="/auth.js"></script>
+<script>
+(function () {
+  function escapeHtml(str) {
+    if (str == null) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function formatContent(str) {
+    if (str == null) return '';
+    var html = escapeHtml(str);
+    // [text](url) -> link
+    html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s<>()]+)\)/g, function (m, text, url) {
+      return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="text-[var(--playarg-primary)] hover:underline">' + text + '</a>';
+    });
+    // bare urls not already in a tag
+    html = html.replace(/(^|[\s(（])(https?:\/\/[^\s<>）)]+)/g, function (m, prefix, url) {
+      return prefix + '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="text-[var(--playarg-primary)] hover:underline">' + url + '</a>';
+    });
+    // @username -> user profile link
+    html = html.replace(/(^|\s)@([a-zA-Z0-9_\u4e00-\u9fa5]+)/g, function (m, prefix, name) {
+      return prefix + '<a href="/user-profile?username=' + encodeURIComponent(name) + '" class="text-[var(--playarg-primary)] hover:underline">@' + name + '</a>';
+    });
+    return html;
+  }
+  function relativeTime(iso) {
+    var diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+    if (diff < 60) return '刚刚';
+    if (diff < 3600) return Math.floor(diff / 60) + ' 分钟前';
+    if (diff < 86400) return Math.floor(diff / 3600) + ' 小时前';
+    return Math.floor(diff / 86400) + ' 天前';
+  }
+  function initials(name) {
+    return String(name || '?').slice(0, 2).toUpperCase();
+  }
+  function getLocalUser() {
+    try { var raw = localStorage.getItem('playarg_user'); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+  }
+
+  var params = new URLSearchParams(location.search);
+  var id = params.get('id');
+  if (!id) {
+    var pathParts = location.pathname.split('/').filter(Boolean);
+    var last = pathParts[pathParts.length - 1] || '';
+    if (last && last !== 'discussion' && last !== 'discussion-detail') id = decodeURIComponent(last);
+  }
+  var detailCard = document.getElementById('detail-card');
+  var repliesList = document.getElementById('replies-list');
+  var repliesHeading = document.getElementById('replies-heading');
+  var replyForm = document.getElementById('reply-form');
+  var replyLoginHint = document.getElementById('reply-login-hint');
+  var replyContent = document.getElementById('reply-content');
+  var replyError = document.getElementById('reply-error');
+  var btnSubmitReply = document.getElementById('btn-submit-reply');
+  var adminEditForm = document.getElementById('admin-edit-form');
+  var adminEditTitle = document.getElementById('admin-edit-title');
+  var adminEditContent = document.getElementById('admin-edit-content');
+  var adminEditTags = document.getElementById('admin-edit-tags');
+  var adminEditError = document.getElementById('admin-edit-error');
+  var adminEditSave = document.getElementById('admin-edit-save');
+  var adminEditCancel = document.getElementById('admin-edit-cancel');
+  var currentDiscussion = null;
+
+  function isAdmin() {
+    var user = getLocalUser();
+    return !!(user && user.role === 'admin');
+  }
+  function adminTag(item, keyPrefix) {
+    var isOwner = item[keyPrefix + 'IsOwner'];
+    var role = item[keyPrefix + 'Role'];
+    var badgeText = item[keyPrefix + 'AdminBadgeText'];
+    if (isOwner) return '<span class="ml-1 inline-flex items-center rounded-full bg-[var(--playarg-accent-purple)]/15 px-2 py-0.5 text-[10px] font-medium text-[var(--playarg-accent-purple)]">站主</span>';
+    if (role === 'admin') return '<span class="ml-1 inline-flex items-center rounded-full bg-[var(--playarg-accent-purple)]/15 px-2 py-0.5 text-[10px] font-medium text-[var(--playarg-accent-purple)]">' + escapeHtml(badgeText || '管理员') + '</span>';
+    return '';
+  }
+  function usernameClass(item, keyPrefix) {
+    return (item[keyPrefix + 'IsOwner'] || item[keyPrefix + 'Role'] === 'admin') ? 'text-[var(--playarg-accent-purple)]' : 'text-[var(--playarg-primary)]';
+  }
+
+  function backLinkHtml() {
+    return '<a href="/discussions" class="text-[var(--playarg-primary)] hover:underline">返回讨论区</a>';
+  }
+
+  function renderNotFound() {
+    detailCard.innerHTML = '<div class="text-center text-sm text-[var(--playarg-muted-foreground)]">帖子不存在或已被删除，' + backLinkHtml() + '</div>';
+    repliesHeading.textContent = '0 条回复';
+    repliesList.innerHTML = '';
+  }
+
+  function renderTags(tags) {
+    return (tags || []).map(function (t) {
+      return '<span class="rounded px-2 py-0.5 text-xs font-medium bg-[var(--playarg-muted)] text-[var(--playarg-muted-foreground)]">' + escapeHtml(t) + '</span>';
+    }).join('');
+  }
+
+  function adminActionsHtml() {
+    if (!isAdmin()) return '';
+    return '<div class="mt-2 flex flex-wrap items-center gap-2">' +
+      '<button id="admin-btn-edit" class="inline-flex items-center gap-1 rounded-md border border-[var(--playarg-border)] px-3 py-1.5 text-xs text-[var(--playarg-foreground)] transition-colors hover:bg-[var(--playarg-muted)]"><i data-lucide="pencil" class="h-3 w-3"></i>编辑</button>' +
+      '<button id="admin-btn-delete" class="inline-flex items-center gap-1 rounded-md border border-[var(--playarg-state-error)]/30 px-3 py-1.5 text-xs text-[var(--playarg-state-error)] transition-colors hover:bg-[var(--playarg-state-error)]/10"><i data-lucide="trash-2" class="h-3 w-3"></i>删除</button>' +
+    '</div>';
+  }
+
+  function renderDetail(d) {
+    detailCard.innerHTML = '<div class="flex flex-col gap-4">' +
+      '<h1 class="text-xl font-semibold tracking-tight text-[var(--playarg-foreground)]">' + escapeHtml(d.title) + '</h1>' +
+      '<div class="flex flex-wrap items-center gap-2 text-sm text-[var(--playarg-muted-foreground)]">' +
+        '<span class="flex items-center gap-1 font-medium ' + usernameClass(d, 'author') + '"><i data-lucide="user" class="h-3.5 w-3.5"></i>' + escapeHtml(d.author) + adminTag(d, 'author') + '</span>' +
+        '<span class="h-3 w-px bg-[var(--playarg-border)]"></span>' +
+        '<span>' + escapeHtml(relativeTime(d.createdAt)) + ' 发布</span>' +
+      '</div>' +
+      '<div class="flex flex-wrap items-center gap-2">' + renderTags(d.tags) + '</div>' +
+      '<div class="whitespace-pre-wrap text-sm leading-relaxed text-[var(--playarg-foreground)]">' + formatContent(d.content) + '</div>' +
+      adminActionsHtml() +
+    '</div>';
+    bindAdminDetailActions();
+  }
+
+  function bindAdminDetailActions() {
+    var editBtn = document.getElementById('admin-btn-edit');
+    var deleteBtn = document.getElementById('admin-btn-delete');
+    if (editBtn) {
+      editBtn.addEventListener('click', function () {
+        if (!currentDiscussion) return;
+        adminEditTitle.value = currentDiscussion.title || '';
+        adminEditContent.value = currentDiscussion.content || '';
+        adminEditTags.value = (currentDiscussion.tags || []).join(', ');
+        adminEditError.classList.add('hidden');
+        adminEditForm.classList.remove('hidden');
+        adminEditForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+    }
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', function () {
+        if (!currentDiscussion) return;
+        if (!confirm('确定删除该讨论帖？')) return;
+        fetch('/api/admin/discussions', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'delete', id: currentDiscussion.id })
+        })
+          .then(function (res) { return res.json(); })
+          .then(function (json) {
+            if (json.ok) {
+              alert('帖子已删除');
+              location.href = 'discussion';
+            } else {
+              alert(json.error || '删除失败');
+            }
+          })
+          .catch(function () { alert('网络错误'); });
+      });
+    }
+  }
+
+  function hideAdminEditForm() {
+    adminEditForm.classList.add('hidden');
+    adminEditError.classList.add('hidden');
+  }
+
+  function submitAdminEdit() {
+    if (!currentDiscussion) return;
+    var title = adminEditTitle.value.trim();
+    var content = adminEditContent.value.trim();
+    var tags = adminEditTags.value.split(',').map(function (t) { return t.trim(); }).filter(Boolean);
+    if (!title) { adminEditError.textContent = '标题不能为空'; adminEditError.classList.remove('hidden'); return; }
+    if (!content) { adminEditError.textContent = '正文不能为空'; adminEditError.classList.remove('hidden'); return; }
+    adminEditError.classList.add('hidden');
+    adminEditSave.disabled = true;
+    fetch('/api/admin/discussions', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'update', id: currentDiscussion.id, title: title, content: content, tags: tags })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (json) {
+        adminEditSave.disabled = false;
+        if (json.ok) {
+          hideAdminEditForm();
+          loadDetail();
+        } else {
+          adminEditError.textContent = json.error || '保存失败';
+          adminEditError.classList.remove('hidden');
+        }
+      })
+      .catch(function () {
+        adminEditSave.disabled = false;
+        adminEditError.textContent = '网络错误';
+        adminEditError.classList.remove('hidden');
+      });
+  }
+
+  function renderReplies(replies) {
+    var list = Array.isArray(replies) ? replies : [];
+    repliesHeading.textContent = list.length + ' 条回复';
+    if (!list.length) {
+      repliesList.innerHTML = '<div class="text-sm text-[var(--playarg-muted-foreground)]">暂无回复，来做第一个回复的人吧！</div>';
+      return;
+    }
+    repliesList.innerHTML = list.map(function (r) {
+      return '<article class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-4">' +
+        '<div class="mb-2 flex flex-wrap items-center gap-2 text-xs text-[var(--playarg-muted-foreground)]">' +
+          '<span class="flex items-center gap-1 font-medium ' + usernameClass(r, 'author') + '"><i data-lucide="user" class="h-3 w-3"></i>' + escapeHtml(r.author || '匿名') + adminTag(r, 'author') + '</span>' +
+          '<span class="h-3 w-px bg-[var(--playarg-border)]"></span>' +
+          '<span>' + escapeHtml(relativeTime(r.createdAt)) + '</span>' +
+        '</div>' +
+        '<div class="whitespace-pre-wrap text-sm leading-relaxed text-[var(--playarg-foreground)]">' + formatContent(r.content) + '</div>' +
+      '</article>';
+    }).join('');
+  }
+
+  function loadDetail() {
+    if (!id) {
+      detailCard.innerHTML = '<div class="text-center text-sm text-[var(--playarg-muted-foreground)]">缺少帖子 ID，' + backLinkHtml() + '</div>';
+      repliesHeading.textContent = '0 条回复';
+      repliesList.innerHTML = '';
+      return;
+    }
+    fetch('/api/discussions?id=' + encodeURIComponent(id), { cache: 'no-store' })
+      .then(function (res) { return res.json(); })
+      .then(function (json) {
+        var d = (json && json.data) || json;
+        if (!d || !d.id) { renderNotFound(); return; }
+        currentDiscussion = d;
+        renderDetail(d);
+        renderReplies(d.replies);
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      })
+      .catch(function (err) {
+        console.error('[discussion-detail]', err);
+        detailCard.innerHTML = '<div class="text-center text-sm text-[var(--playarg-state-error)]">加载失败，' + backLinkHtml() + '</div>';
+      });
+  }
+
+  function updateReplyFormVisibility() {
+    if (getLocalUser()) {
+      replyForm.classList.remove('hidden');
+      replyLoginHint.classList.add('hidden');
+    } else {
+      replyForm.classList.add('hidden');
+      replyLoginHint.classList.remove('hidden');
+    }
+  }
+
+  updateReplyFormVisibility();
+
+  btnSubmitReply.addEventListener('click', function () {
+    var user = getLocalUser();
+    if (!user) { updateReplyFormVisibility(); return; }
+    var content = replyContent.value.trim();
+    if (!content) { replyError.textContent = '回复内容不能为空'; replyError.classList.remove('hidden'); return; }
+    replyError.classList.add('hidden');
+    btnSubmitReply.disabled = true;
+    fetch('/api/discussions', {
+      method: 'POST',
+      cache: 'no-store',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ discussionId: id, content: content })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (json) {
+        btnSubmitReply.disabled = false;
+        if (json.ok) { replyContent.value = ''; loadDetail(); }
+        else { replyError.textContent = json.error || '回复失败'; replyError.classList.remove('hidden'); }
+      })
+      .catch(function (err) {
+        btnSubmitReply.disabled = false;
+        replyError.textContent = '网络错误'; replyError.classList.remove('hidden');
+        console.error(err);
+      });
+  });
+
+  if (adminEditSave) adminEditSave.addEventListener('click', submitAdminEdit);
+  if (adminEditCancel) adminEditCancel.addEventListener('click', hideAdminEditForm);
+
+  loadDetail();
+})();
+</script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    <link rel="apple-touch-icon" href="/assets/logo.png">
+    <title>管理后台 - PlayARG</title>
+    <style id="theme-vars">
+:root {
+  --playarg-background: #0b0c10;
+  --playarg-foreground: #e8e8ec;
+  --playarg-card: #111318;
+  --playarg-card-foreground: #e8e8ec;
+  --playarg-popover: #151821;
+  --playarg-popover-foreground: #e8e8ec;
+  --playarg-primary: #00d9ff;
+  --playarg-primary-foreground: #030507;
+  --playarg-primary-subtle: rgba(0, 217, 255, 0.12);
+  --playarg-primary-dim: rgba(0, 217, 255, 0.06);
+  --playarg-muted: #1a1d25;
+  --playarg-muted-foreground: #8a8f98;
+  --playarg-secondary: #1e212b;
+  --playarg-secondary-foreground: #d1d5db;
+  --playarg-border: #2a2e3a;
+  --playarg-input: #2a2e3a;
+  --playarg-ring: rgba(0, 217, 255, 0.45);
+  --playarg-radius-small: 4px;
+  --playarg-radius-medium: 8px;
+  --playarg-radius-large: 12px;
+  --playarg-state-success: #22c55e;
+  --playarg-state-warning: #f59e0b;
+  --playarg-state-error: #ef4444;
+  --playarg-state-info: #3b82f6;
+  --playarg-code-bg: #0d0f14;
+  --playarg-code-fg: #e8e8ec;
+  --playarg-accent-purple: #a855f7;
+  --playarg-accent-green: #4ade80;
+  --font-sans: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", "Noto Sans SC", monospace;
+}
+@theme inline {
+  --color-background: var(--playarg-background);
+  --color-foreground: var(--playarg-foreground);
+  --color-card: var(--playarg-card);
+  --color-card-foreground: var(--playarg-card-foreground);
+  --color-popover: var(--playarg-popover);
+  --color-popover-foreground: var(--playarg-popover-foreground);
+  --color-primary: var(--playarg-primary);
+  --color-primary-foreground: var(--playarg-primary-foreground);
+  --color-secondary: var(--playarg-secondary);
+  --color-secondary-foreground: var(--playarg-secondary-foreground);
+  --color-muted: var(--playarg-muted);
+  --color-muted-foreground: var(--playarg-muted-foreground);
+  --color-border: var(--playarg-border);
+  --color-input: var(--playarg-input);
+  --color-ring: var(--playarg-ring);
+  --radius-sm: var(--playarg-radius-small);
+  --radius-md: var(--playarg-radius-medium);
+  --radius-lg: var(--playarg-radius-large);
+}
+html, body { font-family: var(--font-sans); background: var(--playarg-background); color: var(--playarg-foreground); }
+.font-mono { font-family: var(--font-mono); }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--playarg-background); }
+::-webkit-scrollbar-thumb { background: var(--playarg-border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3f4d; }
+    </style>
+    <script src="/assets/tailwind.browser.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+@theme inline {
+  --color-background: var(--playarg-background);
+  --color-foreground: var(--playarg-foreground);
+  --color-card: var(--playarg-card);
+  --color-card-foreground: var(--playarg-card-foreground);
+  --color-primary: var(--playarg-primary);
+  --color-primary-foreground: var(--playarg-primary-foreground);
+  --color-muted: var(--playarg-muted);
+  --color-muted-foreground: var(--playarg-muted-foreground);
+  --color-border: var(--playarg-border);
+  --color-input: var(--playarg-input);
+  --color-ring: var(--playarg-ring);
+}
+@layer base {
+  body { background: var(--playarg-background); color: var(--playarg-foreground); }
+  td, th { @apply break-words; word-break: break-all; }
+  th { @apply whitespace-nowrap; }
+}
+    </style>
+    <style>
+.admin-sidebar-link.active { background: var(--playarg-primary-subtle); color: var(--playarg-primary); border-color: rgba(0,217,255,0.25); }
+.admin-table th, .admin-table td { @apply border-b border-[var(--playarg-border)] px-3 py-2 text-sm align-top; }
+.admin-table th { @apply text-left text-xs font-medium text-[var(--playarg-muted-foreground)] bg-[var(--playarg-muted)]/40; }
+.admin-table tr:hover td { background: var(--playarg-muted); }
+    </style>
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('playarg_theme');
+          if (t === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            document.documentElement.classList.remove('dark');
+          }
+        } catch(e) {}
+      })();
+    </script>
+</head>
+<body class="min-h-screen font-sans antialiased">
+
+<header class="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[var(--playarg-border)] bg-[var(--playarg-background)]/90 backdrop-blur">
+  <div class="flex h-full items-center justify-between px-6">
+    <div class="flex items-center gap-3">
+      <a href="/" class="flex items-center gap-2 text-lg font-semibold tracking-tight text-[var(--playarg-primary)]">
+        <img src="/assets/logo.png" class="h-8 w-auto rounded-md" alt="PlayARG" />
+        <span>PlayARG</span>
+      </a>
+      <span class="ml-3 hidden text-xs text-[var(--playarg-muted-foreground)] md:block">管理后台</span>
+    </div>
+    <nav class="flex items-center gap-4">
+      <a href="/" class="text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-foreground)]">返回首页</a>
+      <div id="auth-root" class="relative"></div>
+    </nav>
+  </div>
+</header>
+
+<aside class="fixed left-0 top-16 bottom-0 z-40 w-56 border-r border-[var(--playarg-border)] bg-[var(--playarg-card)]">
+  <nav class="flex flex-col gap-1 p-3">
+    <button data-section="problems" class="admin-sidebar-link flex items-center gap-3 rounded-md border border-transparent px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+      <i data-lucide="book-open" class="h-[18px] w-[18px]"></i><span>题目管理</span>
+    </button>
+    <button data-section="contests" class="admin-sidebar-link flex items-center gap-3 rounded-md border border-transparent px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+      <i data-lucide="trophy" class="h-[18px] w-[18px]"></i><span>比赛管理</span>
+    </button>
+    <button data-section="users" class="admin-sidebar-link flex items-center gap-3 rounded-md border border-transparent px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+      <i data-lucide="users" class="h-[18px] w-[18px]"></i><span>用户管理</span>
+    </button>
+    <button data-section="announcements" class="admin-sidebar-link flex items-center gap-3 rounded-md border border-transparent px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+      <i data-lucide="megaphone" class="h-[18px] w-[18px]"></i><span>公告管理</span>
+    </button>
+    <button data-section="discussions" class="admin-sidebar-link flex items-center gap-3 rounded-md border border-transparent px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+      <i data-lucide="message-square" class="h-[18px] w-[18px]"></i><span>讨论管理</span>
+    </button>
+    <button data-section="feed" class="admin-sidebar-link flex items-center gap-3 rounded-md border border-transparent px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+      <i data-lucide="rocket" class="h-[18px] w-[18px]"></i><span>犇犇管理</span>
+    </button>
+    <button data-section="site" class="admin-sidebar-link flex items-center gap-3 rounded-md border border-transparent px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+      <i data-lucide="settings" class="h-[18px] w-[18px]"></i><span>站点设置</span>
+    </button>
+  </nav>
+</aside>
+
+<main id="main-content" class="ml-56 min-h-screen bg-[var(--playarg-background)] pt-16">
+  <div class="p-6">
+    <div id="admin-feedback" class="mb-4 hidden rounded-md border px-4 py-2 text-sm"></div>
+    <div id="admin-sections"></div>
+  </div>
+</main>
+
+<script src="/auth.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  function escapeHtml(str) {
+    if (str == null) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  }
+
+  function api(path, options) {
+    return fetch(path, Object.assign({ credentials: 'same-origin', cache: 'no-store', headers: { 'Content-Type': 'application/json' } }, options || {}))
+      .then(function (res) { return res.json().then(function (data) { return { res: res, data: data }; }).catch(function () { return { res: res, data: { ok: false, error: 'Invalid response' } }; }); })
+      .catch(function (err) { return { res: { ok: false }, data: { ok: false, error: err && err.message ? err.message : 'Network error' } }; });
+  }
+
+  function feedback(msg, type) {
+    var el = document.getElementById('admin-feedback');
+    el.textContent = msg;
+    el.classList.remove('hidden');
+    if (type === 'error') {
+      el.className = 'mb-4 rounded-md border border-[var(--playarg-state-error)]/30 bg-[var(--playarg-state-error)]/10 px-4 py-2 text-sm text-[var(--playarg-state-error)]';
+    } else {
+      el.className = 'mb-4 rounded-md border border-[var(--playarg-state-success)]/30 bg-[var(--playarg-state-success)]/10 px-4 py-2 text-sm text-[var(--playarg-state-success)]';
+    }
+    setTimeout(function () { el.classList.add('hidden'); }, 4000);
+  }
+
+  var currentSection = 'problems';
+  var problemsData = [];
+  var contestsData = [];
+  var currentAttachments = [];
+  var usersData = [];
+  var announcementsData = [];
+  var discussionsData = [];
+  var feedData = [];
+
+  function setSection(name) {
+    currentSection = name;
+    document.querySelectorAll('.admin-sidebar-link').forEach(function (btn) {
+      if (btn.dataset.section === name) btn.classList.add('active');
+      else btn.classList.remove('active');
+    });
+    var loaders = {
+      problems: loadProblems,
+      contests: loadContests,
+      users: loadUsers,
+      announcements: loadAnnouncements,
+      discussions: loadDiscussions,
+      feed: loadFeedData,
+      site: null
+    };
+    var loader = loaders[name];
+    if (loader) loader();
+    else renderCurrentSection();
+  }
+
+  function renderCurrentSection() {
+    var container = document.getElementById('admin-sections');
+    if (currentSection === 'problems') renderProblems(container);
+    else if (currentSection === 'contests') renderContests(container);
+    else if (currentSection === 'users') renderUsers(container);
+    else if (currentSection === 'announcements') renderAnnouncements(container);
+    else if (currentSection === 'discussions') renderDiscussions(container);
+    else if (currentSection === 'feed') renderFeed(container);
+    else if (currentSection === 'site') renderSite(container);
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
+
+  // ---- Common form helpers ----
+  function inputHtml(id, label, value, type, opts) {
+    opts = opts || {};
+    var disabled = opts.disabled ? ' disabled' : '';
+    var extraClass = opts.disabled ? ' opacity-60' : '';
+    return '<div class="mb-3"><label class="mb-1 block text-xs font-medium text-[var(--playarg-muted-foreground)]">' + escapeHtml(label) + '</label>' +
+      '<input id="' + id + '" type="' + (type || 'text') + '" value="' + escapeHtml(value || '') + '"' + disabled + ' class="h-10 w-full rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-3 text-sm text-[var(--playarg-foreground)] placeholder:text-[var(--playarg-muted-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none' + extraClass + '" /></div>';
+  }
+
+  function textareaHtml(id, label, value, rows) {
+    return '<div class="mb-3"><label class="mb-1 block text-xs font-medium text-[var(--playarg-muted-foreground)]">' + escapeHtml(label) + '</label>' +
+      '<textarea id="' + id + '" rows="' + (rows || 3) + '" class="w-full rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-3 py-2 text-sm text-[var(--playarg-foreground)] placeholder:text-[var(--playarg-muted-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none">' + escapeHtml(value || '') + '</textarea></div>';
+  }
+
+  function selectHtml(id, label, options, value) {
+    var opts = options.map(function (o) { return '<option value="' + escapeHtml(o.value) + '"' + (o.value === value ? ' selected' : '') + '>' + escapeHtml(o.label) + '</option>'; }).join('');
+    return '<div class="mb-3"><label class="mb-1 block text-xs font-medium text-[var(--playarg-muted-foreground)]">' + escapeHtml(label) + '</label>' +
+      '<select id="' + id + '" class="h-10 w-full rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-3 text-sm text-[var(--playarg-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none">' + opts + '</select></div>';
+  }
+
+  function checkboxHtml(id, label, checked) {
+    return '<label class="mb-3 flex cursor-pointer items-center gap-2 text-sm text-[var(--playarg-foreground)]">' +
+      '<input id="' + id + '" type="checkbox"' + (checked ? ' checked' : '') + ' class="h-4 w-4 rounded border-[var(--playarg-border)] bg-[var(--playarg-background)] text-[var(--playarg-primary)] focus:ring-[var(--playarg-ring)]" />' +
+      '<span>' + escapeHtml(label) + '</span></label>';
+  }
+
+  function formatSamplesForEdit(samples) {
+    if (!Array.isArray(samples) || !samples.length) return '';
+    return samples.map(function (s) { return String(s.input || '') + '\n---\n' + String(s.output || ''); }).join('\n===\n');
+  }
+
+  function normalizeSamples(raw) {
+    if (Array.isArray(raw)) {
+      return raw.map(function (s) { return { input: String(s.input || '').trim(), output: String(s.output || '').trim() }; }).filter(function (s) { return s.input || s.output; });
+    }
+    var text = String(raw || '').trim();
+    if (!text) return [];
+    return text.split(/\n?=\s*=\s*=\s*\n?/).map(function (group) {
+      var parts = group.split(/\n?-\s*-\s*-\s*\n?/);
+      return { input: String(parts[0] || '').trim(), output: String(parts[1] || '').trim() };
+    }).filter(function (s) { return s.input || s.output; });
+  }
+
+  function renderAttachmentsEditor() {
+    var el = document.getElementById('pf-attachments-list');
+    if (!el) return;
+    if (!currentAttachments.length) {
+      el.innerHTML = '<div class="text-xs text-[var(--playarg-muted-foreground)]">暂无附件</div>';
+      return;
+    }
+    el.innerHTML = currentAttachments.map(function (a, idx) {
+      return '<div class="flex items-center gap-2 rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-2">' +
+        '<input type="text" data-idx="' + idx + '" data-field="name" value="' + escapeHtml(a.name || '') + '" placeholder="附件名称" class="h-8 flex-1 rounded border border-[var(--playarg-border)] bg-[var(--playarg-muted)] px-2 text-xs text-[var(--playarg-foreground)] placeholder:text-[var(--playarg-muted-foreground)]" />' +
+        '<input type="text" data-idx="' + idx + '" data-field="url" value="' + escapeHtml(a.url || '') + '" placeholder="下载链接" class="h-8 flex-[2] rounded border border-[var(--playarg-border)] bg-[var(--playarg-muted)] px-2 text-xs text-[var(--playarg-foreground)] placeholder:text-[var(--playarg-muted-foreground)]" />' +
+        '<button type="button" data-idx="' + idx + '" class="pf-attachment-remove flex h-8 w-8 items-center justify-center rounded border border-[var(--playarg-state-error)]/30 text-[var(--playarg-state-error)] hover:bg-[var(--playarg-state-error)]/10"><i data-lucide="trash-2" class="h-3.5 w-3.5"></i></button>' +
+      '</div>';
+    }).join('');
+    el.querySelectorAll('input[data-field]').forEach(function (input) {
+      input.addEventListener('input', function () {
+        var idx = parseInt(input.dataset.idx, 10);
+        var field = input.dataset.field;
+        if (currentAttachments[idx]) currentAttachments[idx][field] = input.value;
+      });
+    });
+    el.querySelectorAll('.pf-attachment-remove').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        currentAttachments.splice(parseInt(btn.dataset.idx, 10), 1);
+        renderAttachmentsEditor();
+      });
+    });
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
+
+  function bindAttachmentAdd() {
+    var btn = document.getElementById('pf-attachment-add');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      currentAttachments.push({ name: '', url: '' });
+      renderAttachmentsEditor();
+    });
+  }
+
+  function sectionHeader(title, actionHtml) {
+    return '<div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">' +
+      '<h2 class="text-lg font-semibold text-[var(--playarg-foreground)]">' + escapeHtml(title) + '</h2>' +
+      (actionHtml ? '<div class="flex flex-wrap items-center gap-2">' + actionHtml + '</div>' : '') +
+      '</div>';
+  }
+
+  function card(html) {
+    return '<div class="rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-5">' + html + '</div>';
+  }
+
+  // ---- Problems ----
+  var VISIBILITY_LABEL = { public: '公开', contest: '比赛', hidden: '隐藏' };
+  var VISIBILITY_CLASS = { public: 'bg-[var(--playarg-state-success)]/10 text-[var(--playarg-state-success)]', contest: 'bg-[var(--playarg-state-warning)]/10 text-[var(--playarg-state-warning)]', hidden: 'bg-[var(--playarg-state-error)]/10 text-[var(--playarg-state-error)]' };
+  var DIFFICULTY_LABEL = { l1: 'Level 1', l2: 'Level 2', l3: 'Level 3', l4: 'Level 4', l5: 'Level 5', l6: 'Level 6', l7: 'Level 7' };
+
+  function loadProblems(cb) {
+    api('/api/data?type=problems', { method: 'GET' }).then(function (result) {
+      problemsData = (result.data && result.data.data) || [];
+      if (cb) cb();
+      else renderCurrentSection();
+    });
+  }
+
+  function renderProblems(container) {
+    var rows = problemsData.map(function (p) {
+      var v = p.visibility || 'public';
+      return '<tr>' +
+        '<td><input type="checkbox" class="problem-checkbox h-4 w-4 rounded border-[var(--playarg-border)] bg-[var(--playarg-background)] text-[var(--playarg-primary)]" value="' + escapeHtml(p.id) + '" /></td>' +
+        '<td class="font-mono text-xs">' + escapeHtml(p.id) + '</td>' +
+        '<td><a href="/problem-detail?id=' + encodeURIComponent(p.id) + '" target="_blank" class="text-[var(--playarg-primary)] hover:underline">' + escapeHtml(p.title) + '</a></td>' +
+        '<td><span class="rounded px-1.5 py-0.5 text-[10px] font-medium ' + (VISIBILITY_CLASS[v] || VISIBILITY_CLASS.public) + '">' + escapeHtml(VISIBILITY_LABEL[v] || v) + '</span></td>' +
+        '<td class="text-xs text-[var(--playarg-muted-foreground)]">' + escapeHtml(DIFFICULTY_LABEL[p.difficulty] || p.difficulty) + '</td>' +
+        '<td class="text-xs text-[var(--playarg-muted-foreground)]">' + (p.submissions || 0) + '</td>' +
+        '<td class="text-xs text-[var(--playarg-muted-foreground)]">' + (p.contestId || '-') + '</td>' +
+        '<td class="text-right"><button class="problem-edit-btn mr-1 rounded-md border border-[var(--playarg-border)] px-2 py-1 text-xs text-[var(--playarg-foreground)] hover:bg-[var(--playarg-muted)]" data-id="' + escapeHtml(p.id) + '">编辑</button>' +
+        '<button class="problem-delete-btn rounded-md border border-[var(--playarg-state-error)]/30 px-2 py-1 text-xs text-[var(--playarg-state-error)] hover:bg-[var(--playarg-state-error)]/10" data-id="' + escapeHtml(p.id) + '">删除</button></td>' +
+        '</tr>';
+    }).join('');
+
+    var table = '<table class="admin-table w-full"><thead><tr>' +
+      '<th class="w-10"><input type="checkbox" id="problem-select-all" class="h-4 w-4 rounded border-[var(--playarg-border)] bg-[var(--playarg-background)] text-[var(--playarg-primary)]" /></th>' +
+      '<th>题号</th><th>标题</th><th>可见性</th><th>Level</th><th>提交</th><th>绑定比赛</th><th class="text-right">操作</th></tr></thead>' +
+      '<tbody>' + (rows || '<tr><td colspan="8" class="py-8 text-center text-sm text-[var(--playarg-muted-foreground)]">暂无题目</td></tr>') + '</tbody></table>';
+
+    var actions =
+      '<button id="problem-batch-delete" class="h-9 rounded-md border border-[var(--playarg-state-error)]/30 px-3 text-sm text-[var(--playarg-state-error)] hover:bg-[var(--playarg-state-error)]/10">批量删除</button>' +
+      '<button id="problem-add" class="h-9 rounded-md bg-[var(--playarg-primary)] px-3 text-sm font-medium text-[var(--playarg-primary-foreground)]">新增题目</button>';
+
+    container.innerHTML = sectionHeader('题目管理', actions) + card(table) + renderProblemForm();
+    bindProblemEvents();
+  }
+
+  function renderProblemForm() {
+    return '<div id="problem-form" class="mt-4 hidden rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-5">' +
+      '<h3 id="problem-form-title" class="mb-3 text-base font-semibold text-[var(--playarg-foreground)]">新增题目</h3>' +
+      '<input id="problem-form-edit" type="hidden" value="" />' +
+      '<div class="grid grid-cols-1 gap-4 md:grid-cols-2">' +
+        inputHtml('pf-id', '题号', '') +
+        inputHtml('pf-title', '标题', '') +
+        selectHtml('pf-difficulty', 'Level', [{ value: 'l1', label: 'Level 1' }, { value: 'l2', label: 'Level 2' }, { value: 'l3', label: 'Level 3' }, { value: 'l4', label: 'Level 4' }, { value: 'l5', label: 'Level 5' }, { value: 'l6', label: 'Level 6' }, { value: 'l7', label: 'Level 7' }], 'l1') +
+        inputHtml('pf-tags', '标签（逗号分隔）', '') +
+        '<div class="grid grid-cols-2 gap-3">' + inputHtml('pf-pass', '通过率（%）', '', 'number') + inputHtml('pf-submissions', '提交数', '', 'number') + '</div>' +
+        '<div class="grid grid-cols-2 gap-3">' + inputHtml('pf-time', '时间限制', '1 s') + inputHtml('pf-memory', '内存限制', '128 MB') + '</div>' +
+        selectHtml('pf-visibility', '可见性', [{ value: 'public', label: '公开可见' }, { value: 'contest', label: '仅当前比赛可见' }, { value: 'hidden', label: '不可见' }], 'public') +
+        inputHtml('pf-contest-id', '绑定比赛 ID', '') +
+        inputHtml('pf-answer', '标准答案', '') +
+        inputHtml('pf-source', '来源', '') +
+      '</div>' +
+      textareaHtml('pf-description', '题目简介', '', 6) +
+      '<div class="mb-3"><label class="mb-1 block text-xs font-medium text-[var(--playarg-muted-foreground)]">题目附件</label>' +
+        '<div id="pf-attachments-list" class="mb-2 flex flex-col gap-2"></div>' +
+        '<button id="pf-attachment-add" type="button" class="inline-flex items-center gap-1 rounded-md border border-[var(--playarg-border)] px-2 py-1 text-xs text-[var(--playarg-foreground)] hover:bg-[var(--playarg-muted)]"><i data-lucide="plus" class="h-3 w-3"></i> 添加附件</button>' +
+      '</div>' +
+      '<div class="flex gap-2">' +
+        '<button id="pf-save" class="h-9 rounded-md bg-[var(--playarg-primary)] px-4 text-sm font-medium text-[var(--playarg-primary-foreground)]">保存</button>' +
+        '<button id="pf-cancel" class="h-9 rounded-md border border-[var(--playarg-border)] px-4 text-sm text-[var(--playarg-foreground)] hover:bg-[var(--playarg-muted)]">取消</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function bindProblemEvents() {
+    var selectAll = document.getElementById('problem-select-all');
+    if (selectAll) {
+      selectAll.addEventListener('change', function () {
+        document.querySelectorAll('.problem-checkbox').forEach(function (cb) { cb.checked = selectAll.checked; });
+      });
+    }
+    document.getElementById('problem-add').addEventListener('click', function () {
+      document.getElementById('problem-form').classList.remove('hidden');
+      document.getElementById('problem-form-title').textContent = '新增题目';
+      document.getElementById('problem-form-edit').value = '';
+      document.getElementById('pf-id').disabled = false;
+      ['pf-id','pf-title','pf-tags','pf-pass','pf-submissions','pf-time','pf-memory','pf-answer','pf-source','pf-contest-id'].forEach(function (id) { document.getElementById(id).value = ''; });
+      document.getElementById('pf-difficulty').value = 'l1';
+      document.getElementById('pf-visibility').value = 'public';
+      ['pf-description'].forEach(function (id) { document.getElementById(id).value = ''; });
+      document.getElementById('pf-time').value = '1 s';
+      document.getElementById('pf-memory').value = '128 MB';
+      currentAttachments = [];
+      renderAttachmentsEditor();
+      bindAttachmentAdd();
+      window.scrollTo({ top: document.getElementById('problem-form').offsetTop - 80, behavior: 'smooth' });
+    });
+    document.getElementById('problem-batch-delete').addEventListener('click', function () {
+      var ids = Array.from(document.querySelectorAll('.problem-checkbox:checked')).map(function (cb) { return cb.value; });
+      if (!ids.length) return feedback('请先选择要删除的题目', 'error');
+      if (!confirm('确定批量删除 ' + ids.length + ' 道题目？')) return;
+      api('/api/admin/batch-delete-problems', { method: 'POST', body: JSON.stringify({ ids: ids }) }).then(function (result) {
+        if (result.data.ok) { feedback('已删除 ' + result.data.data.deleted + ' 道题目', 'success'); loadProblems(); }
+        else { feedback(result.data.error || '批量删除失败', 'error'); }
+      });
+    });
+    document.querySelectorAll('.problem-edit-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var p = problemsData.find(function (x) { return String(x.id) === btn.dataset.id; });
+        if (!p) return;
+        document.getElementById('problem-form').classList.remove('hidden');
+        document.getElementById('problem-form-title').textContent = '编辑题目';
+        document.getElementById('problem-form-edit').value = '1';
+        document.getElementById('pf-id').value = p.id || '';
+        document.getElementById('pf-id').disabled = true;
+        document.getElementById('pf-title').value = p.title || '';
+        document.getElementById('pf-difficulty').value = p.difficulty || 'l1';
+        document.getElementById('pf-tags').value = (p.tags || []).join(', ');
+        document.getElementById('pf-pass').value = p.passRate || '';
+        document.getElementById('pf-submissions').value = p.submissions || '';
+        document.getElementById('pf-time').value = p.timeLimit || p.time_limit || '1 s';
+        document.getElementById('pf-memory').value = p.memoryLimit || p.memory_limit || '128 MB';
+        document.getElementById('pf-visibility').value = p.visibility || 'public';
+        document.getElementById('pf-contest-id').value = p.contestId || '';
+        document.getElementById('pf-answer').value = p.answer || '';
+        document.getElementById('pf-source').value = p.source || '';
+        document.getElementById('pf-description').value = p.description || '';
+        currentAttachments = Array.isArray(p.attachments) ? p.attachments.map(function (a) { return { name: String(a.name || ''), url: String(a.url || '') }; }) : [];
+        renderAttachmentsEditor();
+        bindAttachmentAdd();
+        window.scrollTo({ top: document.getElementById('problem-form').offsetTop - 80, behavior: 'smooth' });
+      });
+    });
+    document.querySelectorAll('.problem-delete-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!confirm('确定删除 ' + btn.dataset.id + '？')) return;
+        api('/api/admin/problems', { method: 'POST', body: JSON.stringify({ action: 'delete', id: btn.dataset.id }) }).then(function (result) {
+          if (result.data.ok) { feedback('删除成功', 'success'); loadProblems(); }
+          else { feedback(result.data.error || '删除失败', 'error'); }
+        });
+      });
+    });
+    document.getElementById('pf-cancel').addEventListener('click', function () { document.getElementById('problem-form').classList.add('hidden'); });
+    document.getElementById('pf-save').addEventListener('click', function () {
+      var isEdit = !!document.getElementById('problem-form-edit').value;
+      var item = {
+        id: document.getElementById('pf-id').value.trim(),
+        title: document.getElementById('pf-title').value.trim(),
+        difficulty: document.getElementById('pf-difficulty').value,
+        passRate: parseFloat(document.getElementById('pf-pass').value) || 0,
+        submissions: parseInt(document.getElementById('pf-submissions').value, 10) || 0,
+        tags: document.getElementById('pf-tags').value.split(',').map(function (t) { return t.trim(); }).filter(Boolean),
+        source: document.getElementById('pf-source').value.trim(),
+        timeLimit: document.getElementById('pf-time').value.trim() || '1 s',
+        memoryLimit: document.getElementById('pf-memory').value.trim() || '128 MB',
+        description: document.getElementById('pf-description').value.trim(),
+        answer: document.getElementById('pf-answer').value.trim(),
+        visibility: document.getElementById('pf-visibility').value,
+        contestId: document.getElementById('pf-contest-id').value.trim(),
+        attachments: currentAttachments.filter(function (a) { return (a.url || '').trim(); }).map(function (a) { return { name: (a.name || '').trim() || '附件', url: (a.url || '').trim() }; })
+      };
+      api('/api/admin/problems', { method: 'POST', body: JSON.stringify({ action: isEdit ? 'update' : 'create', item: item }) }).then(function (result) {
+        if (result.data.ok) { feedback('保存成功', 'success'); document.getElementById('problem-form').classList.add('hidden'); loadProblems(); }
+        else { feedback(result.data.error || '保存失败', 'error'); }
+      });
+    });
+  }
+
+  // ---- Contests ----
+  var CONTEST_STATUS_LABEL = { upcoming: '未开始', running: '进行中', ended: '已结束' };
+  var CONTEST_STATUS_CLASS = { upcoming: 'text-[var(--playarg-state-warning)]', running: 'text-[var(--playarg-state-success)]', ended: 'text-[var(--playarg-muted-foreground)]' };
+
+  function loadContests(cb) {
+    api('/api/contests', { method: 'GET' }).then(function (result) {
+      contestsData = (result.data && result.data.data) || [];
+      if (cb) cb();
+      else renderCurrentSection();
+    });
+  }
+
+  function renderContests(container) {
+    var rows = contestsData.map(function (c) {
+      var status = c.status || 'upcoming';
+      var typeLabel = c.isTeamContest ? ('组队赛 (' + (c.teamSize || 4) + '人)') : '个人赛';
+      var typeClass = c.isTeamContest ? 'text-[var(--playarg-accent-purple)]' : 'text-[var(--playarg-primary)]';
+      var participantLabel = c.isTeamContest
+        ? ((c.teamCount || 0) + ' 队')
+        : ((c.participantCount || 0) + ' 人');
+      var org = c.organizer || {};
+      var orgName = org.name || '未知';
+      var orgBadge = org.role === 'admin'
+        ? '<span class="ml-1 inline-flex items-center rounded-full bg-[var(--playarg-accent-purple)]/15 px-1.5 py-0.5 text-[10px] font-medium text-[var(--playarg-accent-purple)]">' + escapeHtml(org.adminBadgeText || '管理员') + '</span>'
+        : '';
+      return '<tr>' +
+        '<td class="font-mono text-xs">' + escapeHtml(c.id) + '</td>' +
+        '<td>' + escapeHtml(c.title || '未命名比赛') + '</td>' +
+        '<td><span class="text-xs font-medium ' + typeClass + '">' + typeLabel + '</span></td>' +
+        '<td class="text-xs"><span class="text-[var(--playarg-foreground)]">' + escapeHtml(orgName) + '</span>' + orgBadge + '</td>' +
+        '<td><span class="text-xs font-medium ' + (CONTEST_STATUS_CLASS[status] || '') + '">' + escapeHtml(CONTEST_STATUS_LABEL[status] || status) + '</span></td>' +
+        '<td class="text-xs text-[var(--playarg-muted-foreground)]">' + escapeHtml(c.startTime ? c.startTime.slice(0, 16).replace('T', ' ') : '-') + '</td>' +
+        '<td class="text-xs text-[var(--playarg-muted-foreground)]">' + escapeHtml(c.endTime ? c.endTime.slice(0, 16).replace('T', ' ') : '-') + '</td>' +
+        '<td class="text-xs text-[var(--playarg-muted-foreground)]">' + participantLabel + '</td>' +
+        '<td class="text-right"><button class="contest-edit-btn mr-1 rounded-md border border-[var(--playarg-border)] px-2 py-1 text-xs text-[var(--playarg-foreground)] hover:bg-[var(--playarg-muted)]" data-id="' + escapeHtml(c.id) + '">编辑</button>' +
+        '<button class="contest-delete-btn rounded-md border border-[var(--playarg-state-error)]/30 px-2 py-1 text-xs text-[var(--playarg-state-error)] hover:bg-[var(--playarg-state-error)]/10" data-id="' + escapeHtml(c.id) + '">删除</button></td>' +
+        '</tr>';
+    }).join('');
+
+    var table = '<table class="admin-table w-full"><thead><tr>' +
+      '<th>比赛 ID</th><th>标题</th><th>类型</th><th>举办者</th><th>状态</th><th>开始时间</th><th>结束时间</th><th>参与</th><th class="text-right">操作</th></tr></thead>' +
+      '<tbody>' + (rows || '<tr><td colspan="9" class="py-8 text-center text-sm text-[var(--playarg-muted-foreground)]">暂无比赛</td></tr>') + '</tbody></table>';
+
+    var actions = '<button id="contest-add" class="h-9 rounded-md bg-[var(--playarg-primary)] px-3 text-sm font-medium text-[var(--playarg-primary-foreground)]">新建比赛</button>';
+
+    container.innerHTML = sectionHeader('比赛管理', actions) + card(table) + renderContestForm();
+    bindContestEvents();
+  }
+
+  function renderContestForm() {
+    return '<div id="contest-form" class="mt-4 hidden rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-5">' +
+      '<h3 id="contest-form-title" class="mb-3 text-base font-semibold text-[var(--playarg-foreground)]">新建比赛</h3>' +
+      '<input type="hidden" id="cf-edit-id" value="">' +
+      '<div id="cf-organizer-info" class="mb-3 hidden rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-muted)]/30 px-3 py-2 text-xs text-[var(--playarg-muted-foreground)]">举办者：<span id="cf-organizer-name" class="font-medium text-[var(--playarg-foreground)]"></span></div>' +
+      inputHtml('cf-title', '比赛标题', '') +
+      textareaHtml('cf-description', '比赛说明', '', 4) +
+      '<div class="grid grid-cols-1 gap-4 md:grid-cols-2">' +
+        inputHtml('cf-start', '开始时间', '', 'datetime-local') +
+        inputHtml('cf-end', '结束时间', '', 'datetime-local') +
+      '</div>' +
+      '<div class="grid grid-cols-1 gap-4 md:grid-cols-2">' +
+        selectHtml('cf-contest-type', '比赛类型', [{ value: 'individual', label: '个人赛' }, { value: 'team', label: '组队赛' }], 'individual') +
+        '<div id="cf-team-size-wrap" class="hidden">' +
+          inputHtml('cf-team-size', '每队人数（2-10）', '4', 'number') +
+        '</div>' +
+      '</div>' +
+      textareaHtml('cf-problems', '题目 ID（每行一个）', '', 4) +
+      checkboxHtml('cf-contest-mode', '比赛模式（只统计比赛时间内的提交）', true) +
+      '<div class="flex gap-2">' +
+        '<button id="cf-save" class="h-9 rounded-md bg-[var(--playarg-primary)] px-4 text-sm font-medium text-[var(--playarg-primary-foreground)]">保存</button>' +
+        '<button id="cf-cancel" class="h-9 rounded-md border border-[var(--playarg-border)] px-4 text-sm text-[var(--playarg-foreground)] hover:bg-[var(--playarg-muted)]">取消</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function bindContestEvents() {
+    document.getElementById('contest-add').addEventListener('click', function () {
+      document.getElementById('contest-form').classList.remove('hidden');
+      document.getElementById('contest-form-title').textContent = '新建比赛';
+      document.getElementById('cf-edit-id').value = '';
+      document.getElementById('cf-organizer-info').classList.add('hidden');
+      document.getElementById('cf-title').value = '';
+      document.getElementById('cf-description').value = '';
+      document.getElementById('cf-start').value = '';
+      document.getElementById('cf-end').value = '';
+      document.getElementById('cf-problems').value = '';
+      document.getElementById('cf-contest-mode').checked = true;
+      document.getElementById('cf-contest-type').value = 'individual';
+      document.getElementById('cf-team-size').value = '4';
+      document.getElementById('cf-team-size-wrap').classList.add('hidden');
+      window.scrollTo({ top: document.getElementById('contest-form').offsetTop - 80, behavior: 'smooth' });
+    });
+    document.querySelectorAll('.contest-edit-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var c = contestsData.find(function (x) { return String(x.id) === btn.dataset.id; });
+        if (!c) return;
+        document.getElementById('contest-form').classList.remove('hidden');
+        document.getElementById('contest-form-title').textContent = '编辑比赛';
+        document.getElementById('cf-edit-id').value = c.id || '';
+        var org = c.organizer || {};
+        var orgName = typeof org === 'string' ? org : (org.name || '未知');
+        document.getElementById('cf-organizer-name').textContent = orgName;
+        document.getElementById('cf-organizer-info').classList.remove('hidden');
+        document.getElementById('cf-title').value = c.title || '';
+        document.getElementById('cf-description').value = c.description || '';
+        document.getElementById('cf-start').value = c.startTime ? c.startTime.slice(0, 16) : '';
+        document.getElementById('cf-end').value = c.endTime ? c.endTime.slice(0, 16) : '';
+        document.getElementById('cf-problems').value = Array.isArray(c.problems) ? c.problems.join('\n') : '';
+        document.getElementById('cf-contest-mode').checked = c.contestMode !== false;
+        document.getElementById('cf-contest-type').value = c.isTeamContest ? 'team' : 'individual';
+        document.getElementById('cf-team-size').value = c.teamSize || 4;
+        document.getElementById('cf-team-size-wrap').classList.toggle('hidden', !c.isTeamContest);
+        window.scrollTo({ top: document.getElementById('contest-form').offsetTop - 80, behavior: 'smooth' });
+      });
+    });
+    document.querySelectorAll('.contest-delete-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!confirm('确认删除比赛 “' + btn.dataset.id + '”？')) return;
+        api('/api/contests', { method: 'POST', body: JSON.stringify({ action: 'delete', id: btn.dataset.id }) }).then(function (result) {
+          if (result.data.ok) { feedback('删除成功', 'success'); loadContests(); }
+          else { feedback(result.data.error || '删除失败', 'error'); }
+        });
+      });
+    });
+
+    // Toggle team size input based on contest type
+    document.getElementById('cf-contest-type').addEventListener('change', function () {
+      var isTeam = this.value === 'team';
+      document.getElementById('cf-team-size-wrap').classList.toggle('hidden', !isTeam);
+    });
+
+    document.getElementById('cf-cancel').addEventListener('click', function () { document.getElementById('contest-form').classList.add('hidden'); });
+    document.getElementById('cf-save').addEventListener('click', function () {
+      var idVal = document.getElementById('cf-edit-id').value.trim();
+      var isEdit = !!idVal;
+      var titleVal = document.getElementById('cf-title').value.trim();
+      var startVal = document.getElementById('cf-start').value;
+      var endVal = document.getElementById('cf-end').value;
+      if (!titleVal || !startVal || !endVal) return feedback('请填写完整信息', 'error');
+      var isTeam = document.getElementById('cf-contest-type').value === 'team';
+      var teamSize = parseInt(document.getElementById('cf-team-size').value, 10) || 4;
+      if (isTeam && (teamSize < 2 || teamSize > 10)) return feedback('每队人数需在 2-10 之间', 'error');
+      var payload = {
+        action: isEdit ? 'update' : 'create',
+        item: {
+          title: titleVal,
+          description: document.getElementById('cf-description').value.trim(),
+          startTime: new Date(startVal).toISOString(),
+          endTime: new Date(endVal).toISOString(),
+          problems: document.getElementById('cf-problems').value.split('\n').map(function (s) { return s.trim(); }).filter(Boolean),
+          contestMode: document.getElementById('cf-contest-mode').checked,
+          isTeamContest: isTeam,
+          teamSize: isTeam ? teamSize : 1
+        }
+      };
+      if (isEdit) payload.item.id = idVal;
+      api('/api/contests', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      }).then(function (result) {
+        if (result.data.ok) { feedback('保存成功', 'success'); document.getElementById('contest-form').classList.add('hidden'); loadContests(); }
+        else { feedback(result.data.error || '保存失败', 'error'); }
+      });
+    });
+  }
+
+  // ---- Users ----
+  function loadUsers(cb) {
+    api('/api/admin/users', { method: 'POST', body: JSON.stringify({ action: 'list' }) }).then(function (result) {
+      usersData = (result.data && result.data.data) || [];
+      if (cb) cb();
+      else renderCurrentSection();
+    });
+  }
+
+  function renderUsers(container) {
+    var rows = usersData.map(function (u) {
+      var roleBadge = u.role === 'admin' ? '<span class="inline-flex items-center rounded-full bg-[var(--playarg-primary-subtle)] px-2 py-0.5 text-[10px] font-medium text-[var(--playarg-primary)]">管理员</span>' : '<span class="inline-flex items-center rounded-full bg-[var(--playarg-muted)] px-2 py-0.5 text-[10px] font-medium text-[var(--playarg-muted-foreground)]">用户</span>';
+      var statusBadge = u.status === 'banned' ? '<span class="inline-flex items-center rounded-full bg-[var(--playarg-state-error)]/10 px-2 py-0.5 text-[10px] font-medium text-[var(--playarg-state-error)]">封禁</span>' : '<span class="inline-flex items-center rounded-full bg-[var(--playarg-state-success)]/10 px-2 py-0.5 text-[10px] font-medium text-[var(--playarg-state-success)]">正常</span>';
+      return '<tr>' +
+        '<td><input type="checkbox" class="user-checkbox h-4 w-4 rounded border-[var(--playarg-border)] bg-[var(--playarg-background)] text-[var(--playarg-primary)]" value="' + u.id + '" /></td>' +
+        '<td class="font-mono text-xs">' + u.id + '</td>' +
+        '<td class="font-medium text-[var(--playarg-primary)]">' + escapeHtml(u.username) + '</td>' +
+        '<td class="text-xs text-[var(--playarg-muted-foreground)]">' + escapeHtml(u.email || '-') + '</td>' +
+        '<td>' + roleBadge + '</td>' +
+        '<td>' + statusBadge + '</td>' +
+        '<td class="text-xs text-[var(--playarg-muted-foreground)]">' + (u.joinedAt ? u.joinedAt.slice(0, 10) : '-') + '</td>' +
+        '<td class="text-right"><button class="user-delete-btn rounded-md border border-[var(--playarg-state-error)]/30 px-2 py-1 text-xs text-[var(--playarg-state-error)] hover:bg-[var(--playarg-state-error)]/10" data-id="' + u.id + '">注销</button></td>' +
+        '</tr>';
+    }).join('');
+
+    var table = '<table class="admin-table w-full"><thead><tr>' +
+      '<th class="w-10"><input type="checkbox" id="user-select-all" class="h-4 w-4 rounded border-[var(--playarg-border)] bg-[var(--playarg-background)] text-[var(--playarg-primary)]" /></th>' +
+      '<th>UID</th><th>用户名</th><th>邮箱</th><th>角色</th><th>状态</th><th>注册时间</th><th class="text-right">操作</th></tr></thead>' +
+      '<tbody>' + (rows || '<tr><td colspan="8" class="py-8 text-center text-sm text-[var(--playarg-muted-foreground)]">暂无用户</td></tr>') + '</tbody></table>';
+
+    var batchActions =
+      '<select id="user-batch-role" class="h-9 rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-2 text-sm text-[var(--playarg-foreground)]">' +
+        '<option value="">角色...</option><option value="admin">设为管理员</option><option value="user">设为普通用户</option></select>' +
+      '<select id="user-batch-status" class="h-9 rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-2 text-sm text-[var(--playarg-foreground)]">' +
+        '<option value="">状态...</option><option value="banned">批量封禁</option><option value="active">批量解封</option></select>' +
+      '<button id="user-batch-apply" class="h-9 rounded-md bg-[var(--playarg-primary)] px-3 text-sm font-medium text-[var(--playarg-primary-foreground)]">应用</button>' +
+      '<button id="user-fix-uids" class="ml-2 h-9 rounded-md border border-[var(--playarg-state-warning)]/30 px-3 text-sm font-medium text-[var(--playarg-state-warning)] hover:bg-[var(--playarg-state-warning)]/10" title="自动检测并修复重复的 UID">修复重复UID</button>';
+
+    container.innerHTML = sectionHeader('用户管理', batchActions) + card(table);
+    bindUserEvents();
+  }
+
+  function bindUserEvents() {
+    var selectAll = document.getElementById('user-select-all');
+    if (selectAll) {
+      selectAll.addEventListener('change', function () {
+        document.querySelectorAll('.user-checkbox').forEach(function (cb) { cb.checked = selectAll.checked; });
+      });
+    }
+    document.getElementById('user-batch-apply').addEventListener('click', function () {
+      var uids = Array.from(document.querySelectorAll('.user-checkbox:checked')).map(function (cb) { return parseInt(cb.value, 10); }).filter(Boolean);
+      if (!uids.length) return feedback('请先选择用户', 'error');
+      var role = document.getElementById('user-batch-role').value;
+      var status = document.getElementById('user-batch-status').value;
+      if (!role && !status) return feedback('请选择要执行的操作', 'error');
+      var tasks = [];
+      if (role) tasks.push(api('/api/admin/batch-set-role', { method: 'POST', body: JSON.stringify({ uids: uids, role: role }) }));
+      if (status) tasks.push(api('/api/admin/batch-set-status', { method: 'POST', body: JSON.stringify({ uids: uids, status: status }) }));
+      Promise.all(tasks).then(function (results) {
+        var ok = results.every(function (r) { return r.data.ok; });
+        if (ok) { feedback('批量操作成功', 'success'); loadUsers(); }
+        else { feedback(results.map(function (r) { return r.data.error; }).filter(Boolean).join(' / ') || '操作失败', 'error'); }
+      });
+    });
+    document.querySelectorAll('.user-delete-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var uid = parseInt(btn.dataset.id, 10);
+        if (!confirm('确定注销用户 UID ' + uid + '？')) return;
+        api('/api/admin/delete-user', { method: 'POST', body: JSON.stringify({ uid: uid }) }).then(function (result) {
+          if (result.data.ok) { feedback('用户已注销', 'success'); loadUsers(); }
+          else { feedback(result.data.error || '注销失败', 'error'); }
+        });
+      });
+    });
+
+    var fixUidsBtn = document.getElementById('user-fix-uids');
+    if (fixUidsBtn) {
+      fixUidsBtn.addEventListener('click', function () {
+        if (!confirm('确定要修复重复的 UID 吗？\n此操作会自动检测重复 UID 并为重复用户分配新 ID，同时更新所有关联数据（提交记录、讨论、动态、比赛等）。')) return;
+        fixUidsBtn.disabled = true;
+        fixUidsBtn.textContent = '修复中...';
+        api('/api/admin/fix-uids', { method: 'POST', body: JSON.stringify({}) }).then(function (result) {
+          fixUidsBtn.disabled = false;
+          fixUidsBtn.textContent = '修复重复UID';
+          if (result.data.ok) {
+            var data = result.data.data;
+            if (data.fixed === 0) {
+              feedback('没有发现重复 UID，数据正常', 'success');
+            } else {
+              var msg = '已修复 ' + data.fixed + ' 个重复 UID。' +
+                '\n更新会话: ' + data.updates.sessions +
+                '\n更新提交: ' + data.updates.submissions +
+                '\n更新讨论: ' + data.updates.discussions +
+                '\n更新动态: ' + data.updates.feed +
+                '\n更新比赛: ' + data.updates.contests;
+              alert(msg);
+              feedback('修复完成，共修复 ' + data.fixed + ' 个重复 UID', 'success');
+              loadUsers();
+            }
+          } else {
+            feedback(result.data.error || '修复失败', 'error');
+          }
+        }).catch(function () {
+          fixUidsBtn.disabled = false;
+          fixUidsBtn.textContent = '修复重复UID';
+          feedback('网络错误', 'error');
+        });
+      });
+    }
+  }
+
+  // ---- Announcements ----
+  function loadAnnouncements(cb) {
+    api('/api/data?type=announcements', { method: 'GET' }).then(function (result) {
+      announcementsData = (result.data && result.data.data) || [];
+      if (cb) cb();
+      else renderCurrentSection();
+    });
+  }
+
+  function renderAnnouncements(container) {
+    var rows = announcementsData.map(function (a) {
+      return '<tr>' +
+        '<td class="text-sm font-medium">' + escapeHtml(a.title) + (a.pinned ? ' <span class="rounded bg-[var(--playarg-primary)] px-1 py-0.5 text-[10px] text-[var(--playarg-primary-foreground)]">置顶</span>' : '') + '</td>' +
+        '<td class="text-xs text-[var(--playarg-muted-foreground)]">' + escapeHtml(a.date) + '</td>' +
+        '<td class="text-xs text-[var(--playarg-muted-foreground)]">' + escapeHtml(a.category) + '</td>' +
+        '<td class="text-right"><button class="ann-edit-btn mr-1 rounded-md border border-[var(--playarg-border)] px-2 py-1 text-xs text-[var(--playarg-foreground)] hover:bg-[var(--playarg-muted)]" data-id="' + a.id + '">编辑</button>' +
+        '<button class="ann-delete-btn rounded-md border border-[var(--playarg-state-error)]/30 px-2 py-1 text-xs text-[var(--playarg-state-error)] hover:bg-[var(--playarg-state-error)]/10" data-id="' + a.id + '">删除</button></td>' +
+        '</tr>';
+    }).join('');
+
+    var table = '<table class="admin-table w-full"><thead><tr><th>标题</th><th>日期</th><th>分类</th><th class="text-right">操作</th></tr></thead>' +
+      '<tbody>' + (rows || '<tr><td colspan="4" class="py-8 text-center text-sm text-[var(--playarg-muted-foreground)]">暂无公告</td></tr>') + '</tbody></table>';
+
+    var actions = '<button id="ann-add" class="h-9 rounded-md bg-[var(--playarg-primary)] px-3 text-sm font-medium text-[var(--playarg-primary-foreground)]">新增公告</button>';
+
+    container.innerHTML = sectionHeader('公告管理', actions) + card(table) + renderAnnouncementForm();
+    bindAnnouncementEvents();
+  }
+
+  function renderAnnouncementForm() {
+    return '<div id="ann-form" class="mt-4 hidden rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-5">' +
+      '<h3 id="ann-form-title" class="mb-3 text-base font-semibold text-[var(--playarg-foreground)]">新增公告</h3>' +
+      '<input id="ann-form-id" type="hidden" />' +
+      '<div class="grid grid-cols-1 gap-4 md:grid-cols-3">' +
+        inputHtml('af-title', '标题', '') +
+        inputHtml('af-date', '日期', '') +
+        inputHtml('af-category', '分类', '') +
+      '</div>' +
+      checkboxHtml('af-pinned', '置顶', false) +
+      textareaHtml('af-content', '摘要', '', 2) +
+      textareaHtml('af-full', '正文（支持换行）', '', 5) +
+      '<div class="flex gap-2">' +
+        '<button id="af-save" class="h-9 rounded-md bg-[var(--playarg-primary)] px-4 text-sm font-medium text-[var(--playarg-primary-foreground)]">保存</button>' +
+        '<button id="af-cancel" class="h-9 rounded-md border border-[var(--playarg-border)] px-4 text-sm text-[var(--playarg-foreground)] hover:bg-[var(--playarg-muted)]">取消</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function bindAnnouncementEvents() {
+    document.getElementById('ann-add').addEventListener('click', function () {
+      document.getElementById('ann-form').classList.remove('hidden');
+      document.getElementById('ann-form-title').textContent = '新增公告';
+      document.getElementById('ann-form-id').value = '';
+      document.getElementById('af-title').value = '';
+      document.getElementById('af-date').value = new Date().toISOString().slice(0, 10);
+      document.getElementById('af-category').value = '平台';
+      document.getElementById('af-pinned').checked = false;
+      document.getElementById('af-content').value = '';
+      document.getElementById('af-full').value = '';
+    });
+    document.querySelectorAll('.ann-edit-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var a = announcementsData.find(function (x) { return x.id == btn.dataset.id; });
+        if (!a) return;
+        document.getElementById('ann-form').classList.remove('hidden');
+        document.getElementById('ann-form-title').textContent = '编辑公告';
+        document.getElementById('ann-form-id').value = a.id;
+        document.getElementById('af-title').value = a.title || '';
+        document.getElementById('af-date').value = a.date || '';
+        document.getElementById('af-category').value = a.category || '';
+        document.getElementById('af-pinned').checked = !!a.pinned;
+        document.getElementById('af-content').value = a.content || '';
+        document.getElementById('af-full').value = a.fullContent || '';
+      });
+    });
+    document.querySelectorAll('.ann-delete-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!confirm('确定删除这条公告？')) return;
+        api('/api/admin/announcements', { method: 'POST', body: JSON.stringify({ action: 'delete', id: parseInt(btn.dataset.id, 10) }) }).then(function (result) {
+          if (result.data.ok) { feedback('删除成功', 'success'); loadAnnouncements(); }
+          else { feedback(result.data.error || '删除失败', 'error'); }
+        });
+      });
+    });
+    document.getElementById('af-cancel').addEventListener('click', function () { document.getElementById('ann-form').classList.add('hidden'); });
+    document.getElementById('af-save').addEventListener('click', function () {
+      var idVal = document.getElementById('ann-form-id').value;
+      var item = {
+        title: document.getElementById('af-title').value.trim(),
+        date: document.getElementById('af-date').value.trim(),
+        category: document.getElementById('af-category').value.trim(),
+        pinned: document.getElementById('af-pinned').checked,
+        content: document.getElementById('af-content').value.trim(),
+        fullContent: document.getElementById('af-full').value.trim()
+      };
+      if (idVal) item.id = parseInt(idVal, 10);
+      api('/api/admin/announcements', { method: 'POST', body: JSON.stringify({ action: idVal ? 'update' : 'create', item: item }) }).then(function (result) {
+        if (result.data.ok) { feedback('保存成功', 'success'); document.getElementById('ann-form').classList.add('hidden'); loadAnnouncements(); }
+        else { feedback(result.data.error || '保存失败', 'error'); }
+      });
+    });
+  }
+
+  // ---- Discussions ----
+  function loadDiscussions(cb) {
+    api('/api/admin/discussions', { method: 'POST', body: JSON.stringify({ action: 'list' }) }).then(function (result) {
+      discussionsData = (result.data && result.data.data) || [];
+      if (cb) cb();
+      else renderCurrentSection();
+    });
+  }
+
+  function renderDiscussions(container) {
+    var rows = discussionsData.map(function (d) {
+      var pinned = d.pinned ? '<span class="mr-1 rounded bg-[var(--playarg-primary)] px-1 py-0.5 text-[10px] text-[var(--playarg-primary-foreground)]">置顶</span>' : '';
+      return '<tr>' +
+        '<td class="text-sm font-medium">' + pinned + escapeHtml(d.title) + '</td>' +
+        '<td class="text-xs text-[var(--playarg-muted-foreground)]">' + escapeHtml(d.author) + '</td>' +
+        '<td class="text-xs text-[var(--playarg-muted-foreground)]">' + (d.replyCount || 0) + '</td>' +
+        '<td class="text-right"><button class="disc-pin-btn mr-1 rounded-md border border-[var(--playarg-border)] px-2 py-1 text-xs text-[var(--playarg-foreground)] hover:bg-[var(--playarg-muted)]" data-id="' + d.id + '" data-pinned="' + (d.pinned ? '1' : '0') + '">' + (d.pinned ? '取消置顶' : '置顶') + '</button>' +
+        '<button class="disc-edit-btn mr-1 rounded-md border border-[var(--playarg-border)] px-2 py-1 text-xs text-[var(--playarg-foreground)] hover:bg-[var(--playarg-muted)]" data-id="' + d.id + '">编辑</button>' +
+        '<button class="disc-delete-btn rounded-md border border-[var(--playarg-state-error)]/30 px-2 py-1 text-xs text-[var(--playarg-state-error)] hover:bg-[var(--playarg-state-error)]/10" data-id="' + d.id + '">删除</button></td>' +
+        '</tr>';
+    }).join('');
+
+    var table = '<table class="admin-table w-full"><thead><tr><th>标题</th><th>作者</th><th>回复</th><th class="text-right">操作</th></tr></thead>' +
+      '<tbody>' + (rows || '<tr><td colspan="4" class="py-8 text-center text-sm text-[var(--playarg-muted-foreground)]">暂无讨论帖</td></tr>') + '</tbody></table>';
+
+    container.innerHTML = sectionHeader('讨论管理', '') + card(table) + renderDiscussionForm();
+    bindDiscussionEvents();
+  }
+
+  function renderDiscussionForm() {
+    return '<div id="disc-form" class="mt-4 hidden rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-5">' +
+      '<h3 class="mb-3 text-base font-semibold text-[var(--playarg-foreground)]">编辑讨论帖</h3>' +
+      '<input id="disc-form-id" type="hidden" />' +
+      inputHtml('df-title', '标题', '') +
+      textareaHtml('df-content', '正文', '', 5) +
+      inputHtml('df-tags', '标签（逗号分隔）', '') +
+      '<div class="flex gap-2">' +
+        '<button id="df-save" class="h-9 rounded-md bg-[var(--playarg-primary)] px-4 text-sm font-medium text-[var(--playarg-primary-foreground)]">保存</button>' +
+        '<button id="df-cancel" class="h-9 rounded-md border border-[var(--playarg-border)] px-4 text-sm text-[var(--playarg-foreground)] hover:bg-[var(--playarg-muted)]">取消</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function bindDiscussionEvents() {
+    document.querySelectorAll('.disc-pin-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var action = btn.dataset.pinned === '1' ? 'unpin' : 'pin';
+        api('/api/admin/discussions', { method: 'POST', body: JSON.stringify({ action: action, id: btn.dataset.id }) }).then(function (result) {
+          if (result.data.ok) { feedback(action === 'pin' ? '置顶成功' : '取消置顶成功', 'success'); loadDiscussions(); }
+          else { feedback(result.data.error || '操作失败', 'error'); }
+        });
+      });
+    });
+    document.querySelectorAll('.disc-edit-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var d = discussionsData.find(function (x) { return String(x.id) === btn.dataset.id; });
+        if (!d) return;
+        document.getElementById('disc-form').classList.remove('hidden');
+        document.getElementById('disc-form-id').value = d.id;
+        document.getElementById('df-title').value = d.title || '';
+        document.getElementById('df-content').value = d.content || '';
+        document.getElementById('df-tags').value = (d.tags || []).join(', ');
+      });
+    });
+    document.querySelectorAll('.disc-delete-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!confirm('确定删除该讨论帖？')) return;
+        api('/api/admin/discussions', { method: 'POST', body: JSON.stringify({ action: 'delete', id: btn.dataset.id }) }).then(function (result) {
+          if (result.data.ok) { feedback('删除成功', 'success'); loadDiscussions(); }
+          else { feedback(result.data.error || '删除失败', 'error'); }
+        });
+      });
+    });
+    document.getElementById('df-cancel').addEventListener('click', function () { document.getElementById('disc-form').classList.add('hidden'); });
+    document.getElementById('df-save').addEventListener('click', function () {
+      var id = document.getElementById('disc-form-id').value;
+      api('/api/admin/discussions', {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'update',
+          id: id,
+          title: document.getElementById('df-title').value.trim(),
+          content: document.getElementById('df-content').value.trim(),
+          tags: document.getElementById('df-tags').value.split(',').map(function (t) { return t.trim(); }).filter(Boolean)
+        })
+      }).then(function (result) {
+        if (result.data.ok) { feedback('保存成功', 'success'); document.getElementById('disc-form').classList.add('hidden'); loadDiscussions(); }
+        else { feedback(result.data.error || '保存失败', 'error'); }
+      });
+    });
+  }
+
+  // ---- Feed ----
+  function loadFeedData(cb) {
+    api('/api/admin/feed', { method: 'POST', body: JSON.stringify({ action: 'list' }) }).then(function (result) {
+      feedData = (result.data && result.data.data) || [];
+      if (cb) cb();
+      else renderCurrentSection();
+    });
+  }
+
+  function renderFeed(container) {
+    var rows = feedData.map(function (f) {
+      return '<tr>' +
+        '<td class="text-sm text-[var(--playarg-foreground)]">' + escapeHtml(f.content) + '</td>' +
+        '<td class="text-xs font-medium text-[var(--playarg-primary)]">' + escapeHtml(f.username) + '</td>' +
+        '<td class="text-xs text-[var(--playarg-muted-foreground)]">' + escapeHtml(f.createdAt ? f.createdAt.slice(0, 16).replace('T', ' ') : '-') + '</td>' +
+        '<td class="text-right"><button class="feed-delete-btn rounded-md border border-[var(--playarg-state-error)]/30 px-2 py-1 text-xs text-[var(--playarg-state-error)] hover:bg-[var(--playarg-state-error)]/10" data-id="' + f.id + '">删除</button></td>' +
+        '</tr>';
+    }).join('');
+
+    var table = '<table class="admin-table w-full"><thead><tr><th>内容</th><th>作者</th><th>时间</th><th class="text-right">操作</th></tr></thead>' +
+      '<tbody>' + (rows || '<tr><td colspan="4" class="py-8 text-center text-sm text-[var(--playarg-muted-foreground)]">暂无犇犇</td></tr>') + '</tbody></table>';
+
+    container.innerHTML = sectionHeader('犇犇管理', '') + card(table);
+    document.querySelectorAll('.feed-delete-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!confirm('确定删除这条犇犇？')) return;
+        api('/api/admin/feed', { method: 'POST', body: JSON.stringify({ action: 'delete', id: btn.dataset.id }) }).then(function (result) {
+          if (result.data.ok) { feedback('删除成功', 'success'); loadFeedData(); }
+          else { feedback(result.data.error || '删除失败', 'error'); }
+        });
+      });
+    });
+  }
+
+  // ---- Site settings ----
+  function renderSite(container) {
+    container.innerHTML = sectionHeader('站点设置', '') +
+      '<div class="grid grid-cols-1 gap-4 lg:grid-cols-2">' +
+        card('<h3 class="mb-3 text-sm font-semibold text-[var(--playarg-foreground)]">首页 Banner</h3>' +
+          checkboxHtml('site-banner-enabled', '启用 Banner', false) +
+          inputHtml('site-banner-image', '图片 URL', '') +
+          inputHtml('site-banner-link', '跳转链接', '') +
+          inputHtml('site-banner-alt', '替代文本', '') +
+          '<button id="site-banner-save" class="mt-1 h-9 rounded-md bg-[var(--playarg-primary)] px-4 text-sm font-medium text-[var(--playarg-primary-foreground)]">保存 Banner</button>') +
+        card('<h3 class="mb-3 text-sm font-semibold text-[var(--playarg-foreground)]">赞助/鸣谢</h3>' +
+          '<p class="mb-2 text-xs text-[var(--playarg-muted-foreground)]">每行一个，格式：名称 [级别] (链接)</p>' +
+          textareaHtml('site-sponsors', '赞助/鸣谢列表', '', 8) +
+          '<button id="site-sponsors-save" class="mt-1 h-9 rounded-md bg-[var(--playarg-primary)] px-4 text-sm font-medium text-[var(--playarg-primary-foreground)]">保存赞助</button>') +
+      '</div>';
+    bindSiteEvents();
+  }
+
+  function bindSiteEvents() {
+    api('/api/data?type=banner', { method: 'GET' }).then(function (result) {
+      var b = (result.data && result.data.data) || {};
+      document.getElementById('site-banner-enabled').checked = !!b.enabled;
+      document.getElementById('site-banner-image').value = b.imageUrl || '';
+      document.getElementById('site-banner-link').value = b.linkUrl || '';
+      document.getElementById('site-banner-alt').value = b.altText || '';
+    });
+    api('/api/data?type=sponsors', { method: 'GET' }).then(function (result) {
+      var list = (result.data && result.data.data) || [];
+      document.getElementById('site-sponsors').value = list.map(function (s) { return (s.name || '') + (s.level ? ' [' + s.level + ']' : '') + (s.url ? ' (' + s.url + ')' : ''); }).join('\n');
+    });
+    document.getElementById('site-banner-save').addEventListener('click', function () {
+      var banner = {
+        enabled: document.getElementById('site-banner-enabled').checked,
+        imageUrl: document.getElementById('site-banner-image').value.trim(),
+        linkUrl: document.getElementById('site-banner-link').value.trim(),
+        altText: document.getElementById('site-banner-alt').value.trim()
+      };
+      api('/api/admin/banner', { method: 'POST', body: JSON.stringify(banner) }).then(function (result) {
+        if (result.data.ok) feedback('Banner 保存成功', 'success');
+        else feedback(result.data.error || '保存失败', 'error');
+      });
+    });
+    document.getElementById('site-sponsors-save').addEventListener('click', function () {
+      var lines = document.getElementById('site-sponsors').value.split('\n');
+      var sponsors = [];
+      lines.forEach(function (line) {
+        line = line.trim(); if (!line) return;
+        var match = line.match(/^(.+?)(?:\s*\[(.*?)\])?(?:\s*\((.*?)\))?\s*$/);
+        if (match) sponsors.push({ name: match[1].trim(), level: (match[2] || '').trim(), url: (match[3] || '').trim() });
+      });
+      api('/api/admin/sponsors', { method: 'POST', body: JSON.stringify({ sponsors: sponsors }) }).then(function (result) {
+        if (result.data.ok) feedback('赞助列表保存成功', 'success');
+        else feedback(result.data.error || '保存失败', 'error');
+      });
+    });
+  }
+
+  // ---- Init ----
+  document.querySelectorAll('.admin-sidebar-link').forEach(function (btn) {
+    btn.addEventListener('click', function () { setSection(btn.dataset.section); });
+  });
+
+  function checkAdminAndLoad() {
+    api('/api/me', { method: 'GET' }).then(function (result) {
+      if (!result.data.ok || !result.data.data || result.data.data.role !== 'admin') {
+        document.getElementById('admin-sections').innerHTML = '<div class="rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-8 text-center text-[var(--playarg-state-error)]">无权访问管理后台</div>';
+        return;
+      }
+      loadProblems(function () { setSection('problems'); });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkAdminAndLoad);
+  } else {
+    checkAdminAndLoad();
+  }
+})();
+</script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

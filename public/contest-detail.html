@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    <link rel="apple-touch-icon" href="/assets/logo.png">
+    <title>比赛详情 - PlayARG</title>
+    <style id="theme-vars">
+:root {
+  --playarg-background: #0b0c10;
+  --playarg-foreground: #e8e8ec;
+  --playarg-card: #111318;
+  --playarg-card-foreground: #e8e8ec;
+  --playarg-popover: #151821;
+  --playarg-popover-foreground: #e8e8ec;
+  --playarg-primary: #00d9ff;
+  --playarg-primary-foreground: #030507;
+  --playarg-primary-subtle: rgba(0, 217, 255, 0.12);
+  --playarg-primary-dim: rgba(0, 217, 255, 0.06);
+  --playarg-muted: #1a1d25;
+  --playarg-muted-foreground: #8a8f98;
+  --playarg-secondary: #1e212b;
+  --playarg-secondary-foreground: #d1d5db;
+  --playarg-border: #2a2e3a;
+  --playarg-input: #2a2e3a;
+  --playarg-ring: rgba(0, 217, 255, 0.45);
+  --playarg-radius-small: 4px;
+  --playarg-radius-medium: 8px;
+  --playarg-radius-large: 12px;
+  --playarg-state-success: #22c55e;
+  --playarg-state-warning: #f59e0b;
+  --playarg-state-error: #ef4444;
+  --playarg-state-info: #3b82f6;
+  --playarg-code-bg: #0d0f14;
+  --playarg-code-fg: #e8e8ec;
+  --playarg-accent-purple: #a855f7;
+  --playarg-accent-green: #4ade80;
+  --font-sans: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", "Noto Sans SC", monospace;
+}
+@theme inline {
+  --color-background: var(--playarg-background);
+  --color-foreground: var(--playarg-foreground);
+  --color-card: var(--playarg-card);
+  --color-card-foreground: var(--playarg-card-foreground);
+  --color-popover: var(--playarg-popover);
+  --color-popover-foreground: var(--playarg-popover-foreground);
+  --color-primary: var(--playarg-primary);
+  --color-primary-foreground: var(--playarg-primary-foreground);
+  --color-secondary: var(--playarg-secondary);
+  --color-secondary-foreground: var(--playarg-secondary-foreground);
+  --color-muted: var(--playarg-muted);
+  --color-muted-foreground: var(--playarg-muted-foreground);
+  --color-border: var(--playarg-border);
+  --color-input: var(--playarg-input);
+  --color-ring: var(--playarg-ring);
+  --radius-sm: var(--playarg-radius-small);
+  --radius-md: var(--playarg-radius-medium);
+  --radius-lg: var(--playarg-radius-large);
+}
+html, body { font-family: var(--font-sans); background: var(--playarg-background); color: var(--playarg-foreground); }
+.font-mono { font-family: var(--font-mono); }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--playarg-background); }
+::-webkit-scrollbar-thumb { background: var(--playarg-border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3f4d; }
+    </style>
+    <script src="/assets/tailwind.browser.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+@theme inline {
+  --color-background: var(--playarg-background);
+  --color-foreground: var(--playarg-foreground);
+  --color-card: var(--playarg-card);
+  --color-card-foreground: var(--playarg-card-foreground);
+  --color-popover: var(--playarg-popover);
+  --color-popover-foreground: var(--playarg-popover-foreground);
+  --color-primary: var(--playarg-primary);
+  --color-primary-foreground: var(--playarg-primary-foreground);
+  --color-secondary: var(--playarg-secondary);
+  --color-secondary-foreground: var(--playarg-secondary-foreground);
+  --color-muted: var(--playarg-muted);
+  --color-muted-foreground: var(--playarg-muted-foreground);
+  --color-border: var(--playarg-border);
+  --color-input: var(--playarg-input);
+  --color-ring: var(--playarg-ring);
+}
+@layer base {
+  body { background: var(--playarg-background); color: var(--playarg-foreground); }
+}
+.problem-ac {
+  background: linear-gradient(90deg, #000000 0%, rgba(34,197,94,0.35) 100%) !important;
+  border-color: rgba(34,197,94,0.45) !important;
+}
+.problem-ac .problem-index,
+.problem-ac .problem-title,
+.problem-ac .problem-id {
+  color: #e8e8ec !important;
+}
+.problem-ac .problem-check {
+  color: #22c55e !important;
+}
+.lb-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.lb-table th, .lb-table td { border-bottom: 1px solid var(--playarg-border); padding: 0.5rem 0.375rem; text-align: center; white-space: nowrap; }
+.lb-table th { color: var(--playarg-muted-foreground); font-weight: 500; background: rgba(255,255,255,0.02); }
+.lb-table td { vertical-align: middle; }
+.lb-table .lb-rank { font-family: var(--font-mono); font-weight: 700; }
+.lb-table .lb-user { text-align: left; max-width: 160px; overflow: hidden; text-overflow: ellipsis; }
+.lb-table .lb-total { font-weight: 700; }
+.lb-cell { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 3.5rem; }
+.lb-cell .lb-symbol { font-weight: 700; line-height: 1; }
+.lb-cell .lb-time { font-size: 0.7rem; color: var(--playarg-muted-foreground); margin-top: 0.15rem; }
+.lb-ac { color: #22c55e; }
+.lb-wa { color: #ef4444; }
+.lb-first-blood { background: rgba(34, 197, 94, 0.18); border-radius: 6px; padding: 0.25rem 0.5rem; }
+.lb-rank-1 { color: #facc15; }
+.lb-rank-2 { color: #d1d5db; }
+.lb-rank-3 { color: #f97316; }
+.lb-user { min-width: 180px; }
+.lb-members { max-width: 220px; }
+    </style>
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('playarg_theme');
+          if (t === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            document.documentElement.classList.remove('dark');
+          }
+        } catch(e) {}
+      })();
+    </script>
+</head>
+<body class="min-h-screen font-sans antialiased">
+<header class="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[var(--playarg-border)] bg-[var(--playarg-background)]/90 backdrop-blur">
+  <div class="flex h-full items-center justify-between px-6">
+    <div class="flex items-center gap-3">
+      <a href="/" class="flex items-center gap-2 text-lg font-semibold tracking-tight text-[var(--playarg-primary)]">
+        <img src="/assets/logo.png" class="h-8 w-auto rounded-md" alt="PlayARG" />
+        <span>PlayARG</span>
+      </a>
+    </div>
+    <nav class="flex items-center gap-4">
+      <a href="/problems" class="text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-foreground)]">题库</a>
+      <a href="/contests" class="text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-foreground)]">比赛</a>
+      <div id="auth-root" class="relative"></div>
+    </nav>
+  </div>
+</header>
+
+<main class="min-h-screen bg-[var(--playarg-background)] pt-16">
+  <div class="mx-auto max-w-6xl p-6">
+    <!-- Contest header banner -->
+    <section class="mb-6 overflow-hidden rounded-xl border border-[var(--playarg-border)] bg-[var(--playarg-card)]">
+      <div class="flex flex-col gap-4 p-6 md:flex-row md:items-start md:justify-between">
+        <div class="min-w-0 flex-1">
+          <div class="mb-2 flex flex-wrap items-center gap-3">
+            <h1 id="contest-title" class="truncate text-2xl font-semibold tracking-tight text-[var(--playarg-foreground)]">加载中…</h1>
+            <span id="contest-status" class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"></span>
+          </div>
+          <div class="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-[var(--playarg-muted-foreground)]">
+            <span><i data-lucide="calendar" class="mr-1 inline h-4 w-4 align-[-2px]"></i><span id="contest-time"></span></span>
+            <span>举办者：<span id="contest-organizer"></span></span>
+          </div>
+          <div id="contest-actions" class="mt-3 hidden flex flex-wrap gap-2">
+            <button id="btn-edit-contest" class="inline-flex items-center gap-1.5 rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-3 py-1.5 text-xs font-medium text-[var(--playarg-foreground)] transition-colors hover:border-[var(--playarg-primary)]/30 hover:text-[var(--playarg-primary)]">
+              <i data-lucide="pencil" class="h-3.5 w-3.5"></i> 编辑比赛
+            </button>
+            <button id="btn-delete-contest" class="inline-flex items-center gap-1.5 rounded-md border border-[var(--playarg-state-error)]/30 bg-[var(--playarg-background)] px-3 py-1.5 text-xs font-medium text-[var(--playarg-state-error)] transition-colors hover:bg-[var(--playarg-state-error)]/10">
+              <i data-lucide="trash-2" class="h-3.5 w-3.5"></i> 删除比赛
+            </button>
+          </div>
+        </div>
+        <div class="flex shrink-0 items-center gap-6 text-right">
+          <div>
+            <div class="text-xs text-[var(--playarg-muted-foreground)]">题数</div>
+            <div id="header-problem-count" class="text-lg font-semibold text-[var(--playarg-foreground)]">-</div>
+          </div>
+          <div>
+            <div class="text-xs text-[var(--playarg-muted-foreground)]">参赛人数</div>
+            <div id="header-participant-count" class="text-lg font-semibold text-[var(--playarg-foreground)]">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="border-t border-[var(--playarg-border)] px-6">
+        <nav class="-mb-px flex gap-6" id="contest-tabs">
+          <button data-tab="description" class="tab-btn inline-flex items-center gap-2 border-b-2 border-[var(--playarg-primary)] px-1 py-3 text-sm font-medium text-[var(--playarg-primary)]">
+            <i data-lucide="file-text" class="h-4 w-4"></i>比赛说明
+          </button>
+          <button data-tab="problems" class="tab-btn inline-flex items-center gap-2 border-b-2 border-transparent px-1 py-3 text-sm font-medium text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-foreground)]">
+            <i data-lucide="book-open" class="h-4 w-4"></i>题目列表
+          </button>
+          <button data-tab="leaderboard" class="tab-btn inline-flex items-center gap-2 border-b-2 border-transparent px-1 py-3 text-sm font-medium text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-foreground)]">
+            <i data-lucide="trophy" class="h-4 w-4"></i>排行榜
+          </button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Two-column layout -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_280px]">
+      <!-- Left: main content -->
+      <div class="min-w-0">
+        <section id="tab-description" class="tab-panel rounded-xl border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-6">
+          <div id="tab-description-content" class="text-sm leading-7 text-[var(--playarg-card-foreground)]">
+            <div class="whitespace-pre-wrap" id="contest-description-text"></div>
+          </div>
+        </section>
+
+        <section id="tab-problems" class="tab-panel hidden rounded-xl border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-6">
+          <h2 class="mb-4 flex items-center gap-2 text-base font-semibold text-[var(--playarg-foreground)]">
+            <i data-lucide="book-open" class="h-5 w-5 text-[var(--playarg-primary)]"></i>
+            比赛题目
+          </h2>
+          <div id="contest-problems">
+            <div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-6 text-center text-sm text-[var(--playarg-muted-foreground)]">加载中…</div>
+          </div>
+        </section>
+
+        <section id="tab-leaderboard" class="tab-panel hidden rounded-xl border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-6">
+          <h2 class="mb-4 flex items-center gap-2 text-base font-semibold text-[var(--playarg-foreground)]">
+            <i data-lucide="trophy" class="h-5 w-5 text-[var(--playarg-primary)]"></i>
+            排行榜
+          </h2>
+          <div id="contest-leaderboard">
+            <div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-6 text-center text-sm text-[var(--playarg-muted-foreground)]">加载中…</div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right: sidebar -->
+      <aside class="space-y-4">
+        <!-- Action card: countdown + registration/team -->
+        <div class="rounded-xl border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-4">
+          <div id="countdown-label" class="text-xs text-[var(--playarg-muted-foreground)]">距离比赛开始</div>
+          <div id="countdown-value" class="mt-1 text-lg font-bold text-[var(--playarg-foreground)]">--</div>
+          <div id="action-area" class="mt-3 border-t border-[var(--playarg-border)] pt-3 text-sm">
+            <div class="text-[var(--playarg-muted-foreground)]">加载中...</div>
+          </div>
+        </div>
+
+        <!-- Contest info card -->
+        <div class="rounded-xl border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-4">
+          <div class="mb-3 text-sm font-semibold text-[var(--playarg-foreground)]">比赛信息</div>
+          <div class="space-y-2.5 text-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-[var(--playarg-muted-foreground)]">比赛编号</span>
+              <span id="info-id" class="font-mono text-[var(--playarg-foreground)]">-</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-[var(--playarg-muted-foreground)]">举办者</span>
+              <span id="info-organizer" class="text-right"></span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-[var(--playarg-muted-foreground)]">比赛类型</span>
+              <span id="info-type" class="text-[var(--playarg-foreground)]"></span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-[var(--playarg-muted-foreground)]">开始时间</span>
+              <span id="info-start" class="text-right text-[var(--playarg-foreground)]">-</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-[var(--playarg-muted-foreground)]">结束时间</span>
+              <span id="info-end" class="text-right text-[var(--playarg-foreground)]">-</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-[var(--playarg-muted-foreground)]">比赛时长</span>
+              <span id="info-duration" class="text-[var(--playarg-foreground)]">-</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer class="border-t border-[var(--playarg-border)] bg-[var(--playarg-card)] py-6">
+  <div class="px-8 text-center text-xs text-[var(--playarg-muted-foreground)]">
+    PlayARG © 2026
+  </div>
+</footer>
+
+<script src="/auth.js"></script>
+<script>
+(function () {
+  function escapeHtml(str) {
+    if (str == null) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  var params = new URLSearchParams(location.search);
+  var id = params.get('id');
+
+  function formatTime(iso) {
+    if (!iso) return '-';
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  }
+
+  function renderStatus(status, isRegistered) {
+    var map = {
+      upcoming: { text: '即将开始', cls: 'bg-[var(--playarg-primary)]/10 text-[var(--playarg-primary)]' },
+      running: { text: '进行中', cls: 'bg-[var(--playarg-state-success)]/10 text-[var(--playarg-state-success)]' },
+      ended: { text: '已结束', cls: 'bg-[var(--playarg-muted-foreground)]/10 text-[var(--playarg-muted-foreground)]' }
+    };
+    var cfg = map[status] || { text: status, cls: 'bg-[var(--playarg-muted)] text-[var(--playarg-foreground)]' };
+    var extra = isRegistered ? ' · 已报名' : '';
+    var el = document.getElementById('contest-status');
+    if (el) {
+      el.className = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ' + cfg.cls;
+      el.textContent = cfg.text + extra;
+    }
+  }
+
+  var acceptedProblemIds = new Set();
+
+  function renderProblems(list, isRegistered) {
+    var el = document.getElementById('contest-problems');
+    if (!el) return;
+    var items = (list || []);
+    if (!items.length) {
+      el.innerHTML = '<div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-6 text-center text-sm text-[var(--playarg-muted-foreground)]">暂无题目</div>';
+      return;
+    }
+    el.innerHTML = items.map(function(p, idx) {
+      var link = isRegistered ? 'href="/problem-detail?id=' + encodeURIComponent(p.id) + '"' : '';
+      var isAc = acceptedProblemIds.has(String(p.id));
+      var cls = isAc ? 'problem-ac' : (isRegistered ? 'hover:border-[var(--playarg-primary)]/30 hover:text-[var(--playarg-primary)]' : 'cursor-default opacity-70');
+      var check = isAc ? '<i data-lucide="check-circle-2" class="problem-check ml-2 h-4 w-4"></i>' : '';
+      var letter = String.fromCharCode(65 + idx);
+      return '<' + (link ? 'a ' + link : 'div ') + ' class="group mb-2 flex items-center justify-between rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-4 py-3 transition-colors ' + cls + '">' +
+        '<div class="flex items-center gap-3">' +
+          '<span class="problem-index flex h-7 w-7 items-center justify-center rounded-md bg-[var(--playarg-primary)]/15 text-sm font-bold text-[var(--playarg-primary)]">' + letter + '</span>' +
+          '<span class="problem-title text-sm font-medium text-[var(--playarg-foreground)]">' + escapeHtml(p.title || p.id) + '</span>' + check +
+        '</div>' +
+      (link ? '</a>' : '</div>');
+    }).join('');
+  }
+
+  function updateRegisterBtn(status, isRegistered, isTeamContest) {
+    var btn = document.getElementById('btn-register');
+    var msg = document.getElementById('register-msg');
+    if (!btn || !msg) return;
+    if (status === 'ended') {
+      msg.className = 'block text-sm font-medium text-[var(--playarg-muted-foreground)]';
+      msg.textContent = '比赛已结束';
+      btn.classList.add('hidden');
+      return;
+    }
+    if (isTeamContest) {
+      // For team contests, registration is handled via team section
+      btn.classList.add('hidden');
+      if (isRegistered) {
+        msg.className = 'block text-sm font-medium text-[var(--playarg-state-success)]';
+        msg.textContent = '已组队';
+      } else {
+        msg.className = 'block text-sm font-medium text-[var(--playarg-muted-foreground)]';
+        msg.textContent = '请在下方创建或加入队伍';
+      }
+      return;
+    }
+    if (isRegistered) {
+      msg.className = 'block text-sm font-medium text-[var(--playarg-state-success)]';
+      msg.textContent = '已报名';
+      btn.classList.add('hidden');
+      return;
+    }
+    btn.classList.remove('hidden');
+    msg.classList.add('hidden');
+  }
+
+  var currentContest = null;
+
+  function renderTeamSection(contest) {
+    var section = document.getElementById('team-section');
+    var content = document.getElementById('team-content');
+    var sizeLabel = document.getElementById('team-size-label');
+    if (!section || !content) return;
+
+    if (!contest.isTeamContest) {
+      section.classList.add('hidden');
+      return;
+    }
+    section.classList.remove('hidden');
+    var teamSize = contest.teamSize || 4;
+    sizeLabel.textContent = '（每队 ' + teamSize + ' 人）';
+
+    var status = contest.status;
+    var myTeam = contest.myTeam;
+
+    if (status === 'ended') {
+      if (myTeam) {
+        content.innerHTML = renderTeamInfoHtml(myTeam, teamSize, false, false);
+      } else {
+        content.innerHTML = '<div class="text-sm text-[var(--playarg-muted-foreground)]">未参与本次比赛</div>';
+      }
+      return;
+    }
+
+    if (myTeam) {
+      var isLeader = String(myTeam.leader) === String(currentUserId());
+      content.innerHTML = renderTeamInfoHtml(myTeam, teamSize, isLeader, true);
+      bindTeamActions(isLeader);
+    } else {
+      content.innerHTML = renderTeamJoinCreateHtml();
+      bindTeamJoinCreate();
+    }
+  }
+
+  function currentUserId() {
+    // Will be set from auth check
+    return window.__contestUserId || null;
+  }
+
+  function renderTeamInfoHtml(team, maxSize, isLeader, canLeave) {
+    var membersHtml = (team.members || []).map(function (m) {
+      var leaderBadge = m.isLeader ? '<span class="ml-1 inline-flex items-center rounded-full bg-[var(--playarg-primary)]/15 px-1.5 py-0.5 text-[10px] font-medium text-[var(--playarg-primary)]">队长</span>' : '';
+      var actions = '';
+      if (isLeader && !m.isLeader) {
+        actions = '<button class="team-kick-btn ml-auto text-xs text-[var(--playarg-state-error)] hover:underline" data-uid="' + escapeHtml(m.userId) + '">移除</button>';
+      }
+      if (isLeader && !m.isLeader) {
+        actions = '<div class="ml-auto flex items-center gap-2">' +
+          '<button class="team-transfer-btn text-xs text-[var(--playarg-primary)] hover:underline" data-uid="' + escapeHtml(m.userId) + '">转让队长</button>' +
+          '<button class="team-kick-btn text-xs text-[var(--playarg-state-error)] hover:underline" data-uid="' + escapeHtml(m.userId) + '">移除</button>' +
+          '</div>';
+      }
+      return '<div class="flex items-center py-1.5 text-sm">' +
+        '<a href="/user-profile?uid=' + encodeURIComponent(m.userId) + '" class="text-[var(--playarg-foreground)] hover:text-[var(--playarg-primary)]">' + escapeHtml(m.username) + '</a>' +
+        leaderBadge +
+        actions +
+        '</div>';
+    }).join('');
+
+    var inviteHtml = isLeader
+      ? '<div class="mb-4 flex items-center gap-2 rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-3">' +
+          '<span class="text-sm text-[var(--playarg-muted-foreground)]">邀请码：</span>' +
+          '<span class="font-mono text-base font-bold text-[var(--playarg-primary)]">' + escapeHtml(team.inviteCode) + '</span>' +
+          '<button id="copy-invite-btn" class="ml-auto text-xs text-[var(--playarg-muted-foreground)] hover:text-[var(--playarg-foreground)]">复制</button>' +
+        '</div>'
+      : '';
+
+    var leaveBtn = canLeave
+      ? '<div class="mt-4 pt-3 border-t border-[var(--playarg-border)]">' +
+          '<button id="team-leave-btn" class="text-sm text-[var(--playarg-state-error)] hover:underline">' + (isLeader ? '解散队伍' : '退出队伍') + '</button>' +
+        '</div>'
+      : '';
+
+    return inviteHtml +
+      '<div class="text-sm text-[var(--playarg-muted-foreground)] mb-2">队伍成员（' + (team.members ? team.members.length : 0) + '/' + maxSize + '）</div>' +
+      '<div class="space-y-1">' + membersHtml + '</div>' +
+      leaveBtn;
+  }
+
+  function renderTeamJoinCreateHtml() {
+    return '<div class="grid grid-cols-1 gap-4 md:grid-cols-2">' +
+      '<div class="rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-4">' +
+        '<h3 class="mb-3 text-sm font-semibold text-[var(--playarg-foreground)]">创建队伍</h3>' +
+        '<input type="text" id="create-team-name" placeholder="输入队伍名称" class="mb-3 w-full h-10 rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-card)] px-3 text-sm text-[var(--playarg-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />' +
+        '<button id="create-team-btn" class="w-full h-10 rounded-md bg-[var(--playarg-primary)] text-sm font-medium text-[var(--playarg-primary-foreground)] hover:brightness-110">创建队伍</button>' +
+      '</div>' +
+      '<div class="rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-4">' +
+        '<h3 class="mb-3 text-sm font-semibold text-[var(--playarg-foreground)]">加入队伍</h3>' +
+        '<input type="text" id="join-team-code" placeholder="输入邀请码" class="mb-3 w-full h-10 rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-card)] px-3 text-sm text-[var(--playarg-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />' +
+        '<button id="join-team-btn" class="w-full h-10 rounded-md border border-[var(--playarg-border)] text-sm font-medium text-[var(--playarg-foreground)] hover:bg-[var(--playarg-muted)]">加入队伍</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function bindTeamActions(isLeader) {
+    var leaveBtn = document.getElementById('team-leave-btn');
+    if (leaveBtn) {
+      leaveBtn.addEventListener('click', function () {
+        var action = isLeader ? '解散队伍' : '退出队伍';
+        if (!confirm('确认' + action + '？')) return;
+        teamApi('team-leave', {});
+      });
+    }
+    var copyBtn = document.getElementById('copy-invite-btn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        var code = currentContest && currentContest.myTeam && currentContest.myTeam.inviteCode;
+        if (code) {
+          navigator.clipboard.writeText(code).then(function () {
+            copyBtn.textContent = '已复制';
+            setTimeout(function () { copyBtn.textContent = '复制'; }, 1500);
+          });
+        }
+      });
+    }
+    document.querySelectorAll('.team-kick-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var uid = btn.dataset.uid;
+        if (!confirm('确认移除该成员？')) return;
+        teamApi('team-kick', { userId: uid });
+      });
+    });
+    document.querySelectorAll('.team-transfer-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var uid = btn.dataset.uid;
+        if (!confirm('确认将队长转让给该成员？')) return;
+        teamApi('team-transfer', { userId: uid });
+      });
+    });
+  }
+
+  function bindTeamJoinCreate() {
+    var createBtn = document.getElementById('create-team-btn');
+    if (createBtn) {
+      createBtn.addEventListener('click', function () {
+        var name = document.getElementById('create-team-name').value.trim();
+        if (!name) { alert('请输入队伍名称'); return; }
+        teamApi('team-create', { name: name });
+      });
+    }
+    var joinBtn = document.getElementById('join-team-btn');
+    if (joinBtn) {
+      joinBtn.addEventListener('click', function () {
+        var code = document.getElementById('join-team-code').value.trim();
+        if (!code) { alert('请输入邀请码'); return; }
+        teamApi('team-join', { code: code });
+      });
+    }
+  }
+
+  function teamApi(action, data) {
+    var body = { action: action };
+    if (data) Object.assign(body, data);
+    fetch('/api/contests?id=' + encodeURIComponent(id), {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (json) {
+        if (json && json.ok) {
+          loadContest();
+        } else {
+          alert((json && json.error) || '操作失败');
+        }
+      })
+      .catch(function () { alert('网络错误'); });
+  }
+
+  function bindRegister() {
+    // Individual register button in sidebar action area
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('#sidebar-register-btn');
+      if (!btn) return;
+      btn.disabled = true;
+      btn.textContent = '报名中…';
+      fetch('/api/contests?id=' + encodeURIComponent(id), {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (json) {
+          if (json && json.ok) {
+            alert('报名成功');
+            loadContest();
+          } else {
+            alert((json && json.error) || '报名失败');
+          }
+        })
+        .catch(function () { alert('网络错误'); });
+    });
+  }
+
+  function renderActionArea(c) {
+    var el = document.getElementById('action-area');
+    if (!el) return;
+    var status = c.status;
+    var isTeam = c.isTeamContest;
+    var isRegistered = c.isRegistered;
+    var myTeam = c.myTeam;
+    var teamSize = c.teamSize || 4;
+
+    if (status === 'ended') {
+      if (isTeam) {
+        if (myTeam) {
+          el.innerHTML = renderSidebarTeamInfo(myTeam, teamSize, false);
+        } else {
+          el.innerHTML = '<div class="text-[var(--playarg-muted-foreground)]">未参与本次比赛</div>';
+        }
+      } else {
+        el.innerHTML = '<div class="text-[var(--playarg-muted-foreground)]">' + (isRegistered ? '您已参加本场比赛。' : '比赛已结束。') + '</div>';
+      }
+      return;
+    }
+
+    if (isTeam) {
+      // Team contest
+      if (myTeam) {
+        var isLeader = String(myTeam.leader) === String(currentUserId());
+        el.innerHTML = renderSidebarTeamInfo(myTeam, teamSize, isLeader);
+        bindSidebarTeamActions(isLeader);
+      } else {
+        // Not registered - show 3 buttons: individual, create team, join team
+        el.innerHTML = '<div class="mb-3 text-[var(--playarg-muted-foreground)]">您还没有报名本场比赛。</div>' +
+          '<div class="mb-2 text-xs text-[var(--playarg-muted-foreground)]">本场比赛允许组队，您可以选择加入小队或创建小队。</div>' +
+          '<div class="flex flex-wrap gap-2">' +
+            '<button id="sidebar-register-btn" class="h-8 rounded-md bg-[var(--playarg-primary)] px-3 text-xs font-medium text-[var(--playarg-primary-foreground)] hover:brightness-110">个人报名</button>' +
+            '<button id="sidebar-create-team-btn" class="h-8 rounded-md border border-[var(--playarg-primary)]/40 bg-[var(--playarg-primary)]/10 px-3 text-xs font-medium text-[var(--playarg-primary)] hover:bg-[var(--playarg-primary)]/20">创建小队</button>' +
+            '<button id="sidebar-join-team-btn" class="h-8 rounded-md border border-[var(--playarg-border)] px-3 text-xs font-medium text-[var(--playarg-foreground)] hover:bg-[var(--playarg-muted)]">加入小队</button>' +
+          '</div>';
+        bindSidebarTeamJoinCreate();
+      }
+    } else {
+      // Individual contest
+      if (isRegistered) {
+        el.innerHTML = '<div class="text-[var(--playarg-state-success)]">✓ 您已报名本场比赛。</div>';
+      } else {
+        el.innerHTML = '<div class="mb-3 text-[var(--playarg-muted-foreground)]">您还没有报名本场比赛。</div>' +
+          '<button id="sidebar-register-btn" class="h-9 rounded-md bg-[var(--playarg-primary)] px-4 text-sm font-medium text-[var(--playarg-primary-foreground)] hover:brightness-110">报名</button>';
+      }
+    }
+  }
+
+  function renderSidebarTeamInfo(team, maxSize, isLeader) {
+    var members = team.members || [];
+    var membersHtml = members.map(function (m) {
+      var nameColor = m.role === 'admin' ? 'text-[var(--playarg-accent-purple)]' : 'text-[var(--playarg-foreground)]';
+      var leaderLabel = m.isLeader ? '<span class="ml-auto text-xs text-[var(--playarg-muted-foreground)]">队长</span>' : '';
+      return '<div class="flex items-center py-1 text-sm">' +
+        '<span class="' + nameColor + ' font-medium">' + escapeHtml(m.username) + '</span>' +
+        leaderLabel +
+        '</div>';
+    }).join('');
+
+    var header = '<div class="mb-2 flex items-center justify-between">' +
+      '<span class="font-semibold text-[var(--playarg-foreground)]">' + escapeHtml(team.name) + '</span>' +
+      (isLeader ? '<button id="sidebar-copy-invite" class="text-xs text-[var(--playarg-primary)] hover:underline">复制邀请</button>' : '') +
+    '</div>';
+
+    var list = '<div class="space-y-0.5">' + membersHtml + '</div>';
+
+    var statusLine = '';
+    if (!isLeader) {
+      statusLine = '<div class="mt-3 border-t border-[var(--playarg-border)] pt-2">' +
+        '<button id="sidebar-leave-team" class="text-xs text-[var(--playarg-state-error)] hover:underline">退出队伍</button>' +
+      '</div>';
+    } else {
+      statusLine = '<div class="mt-3 border-t border-[var(--playarg-border)] pt-2">' +
+        '<button id="sidebar-disband-team" class="text-xs text-[var(--playarg-state-error)] hover:underline">解散小队</button>' +
+      '</div>';
+    }
+
+    return header + list + statusLine;
+  }
+
+  function bindSidebarTeamActions(isLeader) {
+    var copyBtn = document.getElementById('sidebar-copy-invite');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        var code = currentContest && currentContest.myTeam && currentContest.myTeam.inviteCode;
+        if (code) {
+          navigator.clipboard.writeText(code).then(function () {
+            copyBtn.textContent = '已复制';
+            setTimeout(function () { copyBtn.textContent = '复制邀请'; }, 1500);
+          });
+        }
+      });
+    }
+    var leaveBtn = document.getElementById('sidebar-leave-team');
+    if (leaveBtn) {
+      leaveBtn.addEventListener('click', function () {
+        if (!confirm('确认退出队伍？')) return;
+        teamApi('team-leave', {});
+      });
+    }
+    var disbandBtn = document.getElementById('sidebar-disband-team');
+    if (disbandBtn) {
+      disbandBtn.addEventListener('click', function () {
+        if (!confirm('确认解散队伍？')) return;
+        teamApi('team-leave', {});
+      });
+    }
+  }
+
+  function bindSidebarTeamJoinCreate() {
+    var createBtn = document.getElementById('sidebar-create-team-btn');
+    if (createBtn) {
+      createBtn.addEventListener('click', function () {
+        var name = prompt('请输入队伍名称：');
+        if (!name || !name.trim()) return;
+        teamApi('team-create', { name: name.trim() });
+      });
+    }
+    var joinBtn = document.getElementById('sidebar-join-team-btn');
+    if (joinBtn) {
+      joinBtn.addEventListener('click', function () {
+        var code = prompt('请输入邀请码：');
+        if (!code || !code.trim()) return;
+        teamApi('team-join', { code: code.trim() });
+      });
+    }
+  }
+
+  function adminBadge(row) {
+    if (row.isOwner) return '<span class="ml-1 inline-flex items-center rounded-full bg-[var(--playarg-accent-purple)]/15 px-1.5 py-0.5 text-[10px] font-medium text-[var(--playarg-accent-purple)]">站主</span>';
+    if (row.role === 'admin') return '<span class="ml-1 inline-flex items-center rounded-full bg-[var(--playarg-accent-purple)]/15 px-1.5 py-0.5 text-[10px] font-medium text-[var(--playarg-accent-purple)]">' + escapeHtml(row.adminBadgeText || '管理员') + '</span>';
+    return '';
+  }
+
+  function renderLeaderboard(data) {
+    var el = document.getElementById('contest-leaderboard');
+    if (!el) return;
+    var rows = (data && data.rows) || [];
+    var problemIds = (data && data.problemIds) || [];
+    var isTeam = data && data.isTeam;
+    if (!rows.length) {
+      el.innerHTML = '<div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-6 text-center text-sm text-[var(--playarg-muted-foreground)]">暂无排行数据</div>';
+      return;
+    }
+    var html = '<div class="overflow-x-auto"><table class="lb-table">' +
+      '<thead><tr>' +
+        '<th>#</th>' +
+        '<th class="lb-user">' + (isTeam ? '队伍' : '用户') + '</th>' +
+        '<th class="lb-total">=</th>';
+    problemIds.forEach(function (pid, idx) {
+      html += '<th>' + String.fromCharCode(65 + idx) + '</th>';
+    });
+    html += '</tr></thead><tbody>';
+
+    if (isTeam) {
+      rows.forEach(function (r) {
+        var rankCls = 'lb-rank ' + (r.rank === 1 ? 'lb-rank-1' : (r.rank === 2 ? 'lb-rank-2' : (r.rank === 3 ? 'lb-rank-3' : 'text-[var(--playarg-muted-foreground)]')));
+        var membersHtml = (r.members || []).map(function (m) {
+          var leaderBadge = m.isLeader ? ' <span class="text-[10px] text-[var(--playarg-primary)]">★</span>' : '';
+          return '<span class="lb-member-name">' + escapeHtml(m.username) + leaderBadge + '</span>';
+        }).join('');
+        html += '<tr>' +
+          '<td class="' + rankCls + '">#' + r.rank + '</td>' +
+          '<td class="lb-user">' +
+            '<div class="font-semibold text-[var(--playarg-foreground)]">' + escapeHtml(r.teamName) + '</div>' +
+            '<div class="lb-members mt-1 flex flex-wrap gap-1.5 text-xs text-[var(--playarg-muted-foreground)]">' + membersHtml + '</div>' +
+          '</td>' +
+          '<td class="lb-total"><div class="lb-cell"><span class="lb-symbol text-[var(--playarg-foreground)]">' + r.solved + '</span><span class="lb-time">' + (r.totalTime || '') + '</span></div></td>';
+        (r.problems || []).forEach(function (p) {
+          var symbol, cellCls = 'lb-cell';
+          if (p.accepted) {
+            if (p.firstBlood) {
+              symbol = '<i data-lucide="check" class="h-4 w-4"></i>';
+            } else if (p.firstTry) {
+              symbol = '<i data-lucide="check" class="h-4 w-4"></i>';
+            } else {
+              symbol = '+' + p.attempts;
+            }
+            cellCls += ' lb-ac';
+            if (p.firstBlood) cellCls += ' lb-first-blood';
+          } else if (p.attempts > 0) {
+            symbol = '-' + p.attempts;
+            cellCls += ' lb-wa';
+          } else {
+            symbol = '';
+          }
+          html += '<td><div class="' + cellCls + '"><span class="lb-symbol">' + symbol + '</span>' + (p.time ? '<span class="lb-time">' + p.time + '</span>' : '') + '</div></td>';
+        });
+        html += '</tr>';
+      });
+    } else {
+      rows.forEach(function (r) {
+        var rankCls = 'lb-rank ' + (r.rank === 1 ? 'lb-rank-1' : (r.rank === 2 ? 'lb-rank-2' : (r.rank === 3 ? 'lb-rank-3' : 'text-[var(--playarg-muted-foreground)]')));
+        html += '<tr>' +
+          '<td class="' + rankCls + '">#' + r.rank + '</td>' +
+          '<td class="lb-user"><a href="/user-profile?uid=' + encodeURIComponent(r.userId) + '" class="flex items-center text-[var(--playarg-foreground)] hover:text-[var(--playarg-primary)]">' + escapeHtml(r.username) + adminBadge(r) + '</a></td>' +
+          '<td class="lb-total"><div class="lb-cell"><span class="lb-symbol text-[var(--playarg-foreground)]">' + r.solved + '</span><span class="lb-time">' + (r.totalTime || '') + '</span></div></td>';
+        (r.problems || []).forEach(function (p) {
+          var symbol, cellCls = 'lb-cell';
+          if (p.accepted) {
+            if (p.firstBlood) {
+              symbol = '<i data-lucide="check" class="h-4 w-4"></i>';
+            } else if (p.firstTry) {
+              symbol = '<i data-lucide="check" class="h-4 w-4"></i>';
+            } else {
+              symbol = '+' + p.attempts;
+            }
+            cellCls += ' lb-ac';
+            if (p.firstBlood) cellCls += ' lb-first-blood';
+          } else if (p.attempts > 0) {
+            symbol = '-' + p.attempts;
+            cellCls += ' lb-wa';
+          } else {
+            symbol = '';
+          }
+          html += '<td><div class="' + cellCls + '"><span class="lb-symbol">' + symbol + '</span>' + (p.time ? '<span class="lb-time">' + p.time + '</span>' : '') + '</div></td>';
+        });
+        html += '</tr>';
+      });
+    }
+    html += '</tbody></table></div>';
+    el.innerHTML = html;
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
+
+  var lbRefreshTimer = null;
+  function startLeaderboardRefresh() {
+    stopLeaderboardRefresh();
+    lbRefreshTimer = setInterval(function () {
+      if (document.hidden) return;
+      loadLeaderboard();
+    }, 5000);
+  }
+  function stopLeaderboardRefresh() {
+    if (lbRefreshTimer) { clearInterval(lbRefreshTimer); lbRefreshTimer = null; }
+  }
+
+  function loadLeaderboard() {
+    fetch('/api/contest-leaderboard?id=' + encodeURIComponent(id), { cache: 'no-store', credentials: 'same-origin' })
+      .then(function (res) { return res.json(); })
+      .then(function (json) {
+        renderLeaderboard((json && json.data) || null);
+      })
+      .catch(function (err) {
+        console.error('[contest-leaderboard]', err);
+        var el = document.getElementById('contest-leaderboard');
+        if (el) el.innerHTML = '<div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-6 text-center text-sm text-[var(--playarg-state-error)]">加载失败</div>';
+      });
+  }
+
+  function setAccepted(ids) {
+    acceptedProblemIds = new Set((ids || []).map(String));
+  }
+
+  function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(function (btn) {
+      var active = btn.dataset.tab === name;
+      btn.classList.toggle('border-[var(--playarg-primary)]', active);
+      btn.classList.toggle('text-[var(--playarg-primary)]', active);
+      btn.classList.toggle('border-transparent', !active);
+      btn.classList.toggle('text-[var(--playarg-muted-foreground)]', !active);
+      btn.classList.toggle('hover:text-[var(--playarg-foreground)]', !active);
+    });
+    document.querySelectorAll('.tab-panel').forEach(function (panel) {
+      panel.classList.toggle('hidden', !panel.id || panel.id !== 'tab-' + name);
+    });
+    if (name === 'leaderboard') {
+      loadLeaderboard();
+      startLeaderboardRefresh();
+    } else {
+      stopLeaderboardRefresh();
+    }
+  }
+
+  function bindTabs() {
+    document.querySelectorAll('.tab-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () { switchTab(btn.dataset.tab); });
+    });
+  }
+
+  function getCurrentUser() {
+    try {
+      var raw = localStorage.getItem('playarg_user');
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+
+  function renderContestActions(c) {
+    var actionsEl = document.getElementById('contest-actions');
+    if (!actionsEl) return;
+    var user = getCurrentUser();
+    if (!user) { actionsEl.style.display = 'none'; return; }
+    var uid = user.uid || user.userId || user.id;
+    if (!uid) { actionsEl.style.display = 'none'; return; }
+    var org = c.organizer || {};
+    var isOrganizer = org.id && String(org.id) === String(uid);
+    var isAdmin = user.role === 'admin';
+    if (!isOrganizer && !isAdmin) { actionsEl.style.display = 'none'; return; }
+    actionsEl.style.display = 'flex';
+  }
+
+  function bindContestActions() {
+    var editBtn = document.getElementById('btn-edit-contest');
+    var delBtn = document.getElementById('btn-delete-contest');
+    if (editBtn) {
+      editBtn.addEventListener('click', function () {
+        openEditModal(currentContest);
+      });
+    }
+    if (delBtn) {
+      delBtn.addEventListener('click', function () {
+        if (!confirm('确认删除此比赛？删除后无法恢复。')) return;
+        fetch('/api/contests', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ action: 'delete', id: id })
+        }).then(function (r) { return r.json(); }).then(function (data) {
+          if (data.ok) {
+            alert('删除成功');
+            window.location.href = '/contests';
+          } else {
+            alert(data.error || '删除失败');
+          }
+        }).catch(function () { alert('网络错误，请重试'); });
+      });
+    }
+  }
+
+  function openEditModal(c) {
+    var modal = document.getElementById('edit-contest-modal');
+    if (!modal) return;
+    document.getElementById('ec-title').value = c.title || '';
+    document.getElementById('ec-description').value = c.description || '';
+    document.getElementById('ec-start').value = c.startTime ? c.startTime.slice(0, 16) : '';
+    document.getElementById('ec-end').value = c.endTime ? c.endTime.slice(0, 16) : '';
+    document.getElementById('ec-mode').value = c.mode || 'checkpoint';
+    document.getElementById('ec-contest-mode').checked = c.contestMode !== false;
+    document.querySelector('input[name="ec-type"][value="' + (c.isTeamContest ? 'team' : 'individual') + '"]').checked = true;
+    document.getElementById('ec-team-size').value = c.teamSize || 4;
+    document.getElementById('ec-team-size-wrap').classList.toggle('hidden', !c.isTeamContest);
+    document.getElementById('ec-problems').value = Array.isArray(c.problems) ? c.problems.join('\n') : '';
+    modal.style.display = 'flex';
+  }
+
+  function closeEditModal() {
+    document.getElementById('edit-contest-modal').style.display = 'none';
+  }
+
+  function bindEditModal() {
+    document.querySelectorAll('input[name="ec-type"]').forEach(function (r) {
+      r.addEventListener('change', function () {
+        document.getElementById('ec-team-size-wrap').classList.toggle('hidden', r.value !== 'team');
+      });
+    });
+    document.getElementById('ec-cancel').addEventListener('click', closeEditModal);
+    document.getElementById('ec-save').addEventListener('click', function () {
+      var title = document.getElementById('ec-title').value.trim();
+      var desc = document.getElementById('ec-description').value.trim();
+      var start = document.getElementById('ec-start').value;
+      var end = document.getElementById('ec-end').value;
+      var mode = document.getElementById('ec-mode').value;
+      var contestMode = document.getElementById('ec-contest-mode').checked;
+      var isTeam = document.querySelector('input[name="ec-type"]:checked').value === 'team';
+      var teamSize = parseInt(document.getElementById('ec-team-size').value, 10) || 4;
+      var problems = document.getElementById('ec-problems').value.split('\n').map(function (s) { return s.trim(); }).filter(Boolean);
+
+      if (!title) return alert('请填写比赛标题');
+      if (!start || !end) return alert('请填写开始和结束时间');
+      if (new Date(start) >= new Date(end)) return alert('结束时间必须晚于开始时间');
+      if (isTeam && (teamSize < 2 || teamSize > 10)) return alert('每队人数需在 2-10 之间');
+
+      var btn = document.getElementById('ec-save');
+      btn.disabled = true;
+      btn.textContent = '保存中...';
+
+      fetch('/api/contests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          action: 'update',
+          item: {
+            id: id,
+            title: title,
+            description: desc,
+            startTime: new Date(start).toISOString(),
+            endTime: new Date(end).toISOString(),
+            mode: mode,
+            contestMode: contestMode,
+            isTeamContest: isTeam,
+            teamSize: isTeam ? teamSize : 1,
+            problems: problems
+          }
+        })
+      }).then(function (r) { return r.json(); }).then(function (data) {
+        if (data.ok) {
+          alert('保存成功');
+          closeEditModal();
+          loadContest();
+        } else {
+          alert(data.error || '保存失败');
+        }
+      }).catch(function () { alert('网络错误，请重试'); })
+        .finally(function () { btn.disabled = false; btn.textContent = '保存'; });
+    });
+  }
+
+  var countdownTimer = null;
+
+  function formatDuration(ms) {
+    if (ms < 0) ms = 0;
+    var s = Math.floor(ms / 1000);
+    var d = Math.floor(s / 86400); s %= 86400;
+    var h = Math.floor(s / 3600); s %= 3600;
+    var m = Math.floor(s / 60); s %= 60;
+    var parts = [];
+    if (d > 0) parts.push(d + ' 天');
+    if (h > 0 || d > 0) parts.push(h + ' 小时');
+    if (m > 0 || h > 0 || d > 0) parts.push(m + ' 分');
+    parts.push(s + ' 秒');
+    return parts.join(' ');
+  }
+
+  function startCountdown(c) {
+    if (countdownTimer) clearInterval(countdownTimer);
+    var labelEl = document.getElementById('countdown-label');
+    var valueEl = document.getElementById('countdown-value');
+    if (!labelEl || !valueEl) return;
+
+    function tick() {
+      var now = Date.now();
+      var start = new Date(c.startTime).getTime();
+      var end = new Date(c.endTime).getTime();
+      if (now < start) {
+        labelEl.textContent = '离开始还有';
+        valueEl.textContent = formatDuration(start - now);
+        valueEl.className = 'mt-1 text-lg font-bold text-[var(--playarg-foreground)]';
+      } else if (now < end) {
+        labelEl.textContent = '离结束还有';
+        valueEl.textContent = formatDuration(end - now);
+        valueEl.className = 'mt-1 text-lg font-bold text-[var(--playarg-state-success)]';
+      } else {
+        labelEl.textContent = '比赛已结束';
+        valueEl.textContent = formatDuration(now - end) + ' 前';
+        valueEl.className = 'mt-1 text-lg font-bold text-[var(--playarg-muted-foreground)]';
+        if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+      }
+    }
+    tick();
+    countdownTimer = setInterval(tick, 1000);
+  }
+
+  function renderSidebar(c) {
+    var org = c.organizer || {};
+    var orgName = typeof org === 'string' ? org : (org.name || '未知');
+    var orgIsAdmin = typeof org !== 'string' && org.role === 'admin';
+    var orgBadge = orgIsAdmin
+      ? '<span class="ml-1 inline-flex items-center rounded-full bg-[var(--playarg-accent-purple)]/15 px-1.5 py-0.5 text-[10px] font-medium text-[var(--playarg-accent-purple)]">' + escapeHtml(org.adminBadgeText || '管理员') + '</span>'
+      : '';
+    var orgColor = orgIsAdmin ? 'text-[var(--playarg-accent-purple)]' : 'text-[var(--playarg-foreground)]';
+
+    var infoOrg = document.getElementById('info-organizer');
+    if (infoOrg) infoOrg.innerHTML = '<span class="font-medium ' + orgColor + '">' + escapeHtml(orgName) + '</span>' + orgBadge;
+
+    var infoId = document.getElementById('info-id');
+    if (infoId) infoId.textContent = '#' + (c.id || '-');
+
+    var infoType = document.getElementById('info-type');
+    if (infoType) {
+      if (c.isTeamContest) {
+        infoType.innerHTML = '<span class="rounded bg-[var(--playarg-accent-purple)]/15 px-2 py-0.5 text-xs font-medium text-[var(--playarg-accent-purple)]">组队赛</span> <span class="text-xs text-[var(--playarg-muted-foreground)]">' + (c.teamSize || 4) + '人</span>';
+      } else {
+        infoType.innerHTML = '<span class="rounded bg-[var(--playarg-primary)]/15 px-2 py-0.5 text-xs font-medium text-[var(--playarg-primary)]">个人赛</span>';
+      }
+    }
+
+    var infoStart = document.getElementById('info-start');
+    if (infoStart) infoStart.textContent = formatTime(c.startTime);
+    var infoEnd = document.getElementById('info-end');
+    if (infoEnd) infoEnd.textContent = formatTime(c.endTime);
+
+    var infoDuration = document.getElementById('info-duration');
+    if (infoDuration) {
+      var ms = new Date(c.endTime).getTime() - new Date(c.startTime).getTime();
+      if (ms > 0) {
+        var h = Math.floor(ms / 3600000);
+        var m = Math.floor((ms % 3600000) / 60000);
+        var d = Math.floor(h / 24);
+        var rh = h % 24;
+        if (d > 0) infoDuration.textContent = d + '.' + Math.round(rh / 24 * 100) / 100 + 'd (' + h + ' 小时)';
+        else if (m > 0) infoDuration.textContent = h + ' 小时 ' + m + ' 分';
+        else infoDuration.textContent = h + ' 小时';
+      }
+    }
+
+    var regSidebar = document.getElementById('register-status-sidebar');
+    if (regSidebar) {
+      if (c.isRegistered) {
+        regSidebar.textContent = '✓ 您已报名本场比赛';
+        regSidebar.className = 'mt-3 text-xs font-medium text-[var(--playarg-state-success)]';
+      } else if (c.status === 'upcoming') {
+        regSidebar.textContent = '尚未报名';
+        regSidebar.className = 'mt-3 text-xs font-medium text-[var(--playarg-muted-foreground)]';
+      } else {
+        regSidebar.textContent = '';
+      }
+    }
+  }
+
+  function loadContest() {
+    if (!id) {
+      document.getElementById('contest-title').textContent = '缺少比赛 ID';
+      return;
+    }
+    fetch('/api/contests?id=' + encodeURIComponent(id), { cache: 'no-store', credentials: 'same-origin' })
+      .then(function (res) { return res.json(); })
+      .then(function (json) {
+        var c = (json && json.data) || null;
+        if (!c || !c.id) {
+          document.getElementById('contest-title').textContent = '比赛不存在';
+          return;
+        }
+        currentContest = c;
+        // Try to get user id from auth state
+        if (window.Auth && typeof window.Auth.getUser === 'function') {
+          var u = window.Auth.getUser();
+          if (u) window.__contestUserId = u.uid || u.userId || u.id;
+        }
+        document.title = escapeHtml(c.title || c.id) + ' - PlayARG';
+        document.getElementById('contest-title').textContent = c.title || c.id;
+        var orgEl = document.getElementById('contest-organizer');
+        var org = c.organizer || {};
+        var orgName = typeof org === 'string' ? org : (org.name || '未知');
+        var orgColor = (typeof org !== 'string' && org.role === 'admin') ? 'text-[var(--playarg-accent-purple)]' : 'text-[var(--playarg-foreground)]';
+        var orgBadge = (typeof org !== 'string' && org.role === 'admin')
+          ? '<span class="ml-1.5 inline-flex items-center rounded-full bg-[var(--playarg-accent-purple)]/15 px-1.5 py-0.5 text-[10px] font-medium text-[var(--playarg-accent-purple)]">' + escapeHtml(org.adminBadgeText || '管理员') + '</span>'
+          : '';
+        orgEl.innerHTML = '<span class="font-medium ' + orgColor + '">' + escapeHtml(orgName) + '</span>' + orgBadge;
+        document.getElementById('contest-time').textContent = formatTime(c.startTime) + ' ~ ' + formatTime(c.endTime);
+
+        var descEl = document.getElementById('contest-description-text');
+        if (descEl) descEl.textContent = c.description || '暂无比赛说明';
+        var tabDescEl = document.getElementById('tab-description-content');
+        if (tabDescEl && !document.getElementById('contest-description-text')) {
+          tabDescEl.textContent = c.description || '暂无比赛说明';
+        }
+
+        // Header stats
+        var pCount = Array.isArray(c.problems) ? c.problems.length : (Array.isArray(c.problemList) ? c.problemList.length : 0);
+        var pcEl = document.getElementById('header-problem-count');
+        if (pcEl) pcEl.textContent = pCount;
+        var ppEl = document.getElementById('header-participant-count');
+        if (ppEl) ppEl.textContent = c.participantCount != null ? c.participantCount : (c.teamCount != null ? c.teamCount + ' 队' : '-');
+
+        renderStatus(c.status, c.isRegistered);
+        setAccepted(c.acceptedProblemIds);
+        renderProblems(c.problemList, c.isRegistered);
+        renderActionArea(c);
+        renderContestActions(c);
+        renderSidebar(c);
+        startCountdown(c);
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      })
+      .catch(function (err) {
+        console.error('[contest-detail]', err);
+        document.getElementById('contest-title').textContent = '加载失败';
+      });
+  }
+
+  loadContest();
+  bindRegister();
+  bindTabs();
+  bindContestActions();
+  bindEditModal();
+})();
+</script>
+
+    <!-- Edit Contest Modal -->
+    <div id="edit-contest-modal" class="fixed inset-0 z-50 bg-black/50 p-4" style="display:none; align-items:center; justify-content:center;">
+      <div class="mx-auto w-full max-w-xl overflow-hidden rounded-xl border border-[var(--playarg-border)] bg-[var(--playarg-card)] shadow-xl">
+        <div class="flex items-center justify-between border-b border-[var(--playarg-border)] px-5 py-3">
+          <h3 class="text-base font-semibold text-[var(--playarg-foreground)]">编辑比赛</h3>
+          <button onclick="document.getElementById('edit-contest-modal').style.display='none'" class="text-[var(--playarg-muted-foreground)] hover:text-[var(--playarg-foreground)]">
+            <i data-lucide="x" class="h-5 w-5"></i>
+          </button>
+        </div>
+        <div class="max-h-[70vh] space-y-4 overflow-y-auto p-5">
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-[var(--playarg-foreground)]">比赛标题</label>
+            <input id="ec-title" type="text" class="h-9 w-full rounded-md border border-[var(--playarg-input)] bg-[var(--playarg-background)] px-3 text-sm text-[var(--playarg-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <label class="text-sm font-medium text-[var(--playarg-foreground)]">开始时间</label>
+              <input id="ec-start" type="datetime-local" class="h-9 w-full rounded-md border border-[var(--playarg-input)] bg-[var(--playarg-background)] px-3 text-sm text-[var(--playarg-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-sm font-medium text-[var(--playarg-foreground)]">结束时间</label>
+              <input id="ec-end" type="datetime-local" class="h-9 w-full rounded-md border border-[var(--playarg-input)] bg-[var(--playarg-background)] px-3 text-sm text-[var(--playarg-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />
+            </div>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-[var(--playarg-foreground)]">参赛形式</label>
+            <div class="flex gap-3">
+              <label class="flex flex-1 cursor-pointer items-center gap-2 rounded-md border border-[var(--playarg-input)] bg-[var(--playarg-background)] p-2.5 text-sm transition-colors has-[:checked]:border-[var(--playarg-primary)] has-[:checked]:bg-[var(--playarg-primary-subtle)]">
+                <input type="radio" name="ec-type" value="individual" checked class="h-4 w-4 accent-[var(--playarg-primary)]" />
+                <span>个人赛</span>
+              </label>
+              <label class="flex flex-1 cursor-pointer items-center gap-2 rounded-md border border-[var(--playarg-input)] bg-[var(--playarg-background)] p-2.5 text-sm transition-colors has-[:checked]:border-[var(--playarg-primary)] has-[:checked]:bg-[var(--playarg-primary-subtle)]">
+                <input type="radio" name="ec-type" value="team" class="h-4 w-4 accent-[var(--playarg-primary)]" />
+                <span>组队赛</span>
+              </label>
+            </div>
+          </div>
+          <div id="ec-team-size-wrap" class="space-y-1.5 hidden">
+            <label class="text-sm font-medium text-[var(--playarg-foreground)]">每队人数（2-10）</label>
+            <input id="ec-team-size" type="number" min="2" max="10" value="4" class="h-9 w-full rounded-md border border-[var(--playarg-input)] bg-[var(--playarg-background)] px-3 text-sm text-[var(--playarg-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-[var(--playarg-foreground)]">比赛方式</label>
+            <select id="ec-mode" class="h-9 w-full rounded-md border border-[var(--playarg-input)] bg-[var(--playarg-background)] px-3 text-sm text-[var(--playarg-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]">
+              <option value="checkpoint">闯关（按顺序解锁）</option>
+              <option value="simultaneous">同时（全部开放）</option>
+            </select>
+          </div>
+          <div class="space-y-1.5">
+            <label class="flex cursor-pointer items-center gap-2 text-sm font-medium text-[var(--playarg-foreground)]">
+              <input id="ec-contest-mode" type="checkbox" checked class="h-4 w-4 accent-[var(--playarg-primary)]" />
+              比赛模式（只统计比赛时间内的提交）
+            </label>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-[var(--playarg-foreground)]">比赛说明</label>
+            <textarea id="ec-description" rows="3" class="w-full rounded-md border border-[var(--playarg-input)] bg-[var(--playarg-background)] p-2.5 text-sm text-[var(--playarg-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]"></textarea>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-[var(--playarg-foreground)]">题目 ID（每行一个）</label>
+            <textarea id="ec-problems" rows="4" class="w-full rounded-md border border-[var(--playarg-input)] bg-[var(--playarg-background)] p-2.5 font-mono text-sm text-[var(--playarg-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]"></textarea>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 border-t border-[var(--playarg-border)] px-5 py-3">
+          <button id="ec-cancel" class="h-9 rounded-md border border-[var(--playarg-border)] px-4 text-sm text-[var(--playarg-foreground)] hover:bg-[var(--playarg-muted)]">取消</button>
+          <button id="ec-save" class="h-9 rounded-md bg-[var(--playarg-primary)] px-4 text-sm font-medium text-[var(--playarg-primary-foreground)] hover:brightness-110">保存</button>
+        </div>
+      </div>
+    </div>
+</body>
+</html>

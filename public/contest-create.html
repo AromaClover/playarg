@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    <link rel="apple-touch-icon" href="/assets/logo.png">
+    <title>创建比赛 - PlayARG</title>
+    <style id="theme-vars">
+/* PlayARG — Dark geek theme tokens */
+
+:root {
+  /* Core dark surfaces */
+  --playarg-background: #0b0c10;
+  --playarg-foreground: #e8e8ec;
+  --playarg-card: #111318;
+  --playarg-card-foreground: #e8e8ec;
+  --playarg-popover: #151821;
+  --playarg-popover-foreground: #e8e8ec;
+
+  /* Primary accent — cyan/teal glow */
+  --playarg-primary: #00d9ff;
+  --playarg-primary-foreground: #030507;
+  --playarg-primary-subtle: rgba(0, 217, 255, 0.12);
+  --playarg-primary-dim: rgba(0, 217, 255, 0.06);
+
+  /* Muted / secondary */
+  --playarg-muted: #1a1d25;
+  --playarg-muted-foreground: #8a8f98;
+  --playarg-secondary: #1e212b;
+  --playarg-secondary-foreground: #d1d5db;
+
+  /* Borders & inputs */
+  --playarg-border: #2a2e3a;
+  --playarg-input: #2a2e3a;
+  --playarg-ring: rgba(0, 217, 255, 0.45);
+
+  /* Radius */
+  --playarg-radius-small: 4px;
+  --playarg-radius-medium: 8px;
+  --playarg-radius-large: 12px;
+
+  /* State colors */
+  --playarg-state-success: #22c55e;
+  --playarg-state-warning: #f59e0b;
+  --playarg-state-error: #ef4444;
+  --playarg-state-info: #3b82f6;
+
+  /* Code / data */
+  --playarg-code-bg: #0d0f14;
+  --playarg-code-fg: #e8e8ec;
+  --playarg-accent-purple: #a855f7;
+  --playarg-accent-green: #4ade80;
+
+  /* Spacing scale */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 80px;
+
+  /* Typography */
+  --font-sans: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", "Noto Sans SC", monospace;
+
+  /* Shadows */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.15);
+  --shadow-2: 0 8px 24px -8px rgba(0, 217, 255, 0.14);
+  --shadow-3: 0 24px 60px -20px rgba(0, 0, 0, 0.55);
+}
+
+@theme inline {
+  --color-background: var(--playarg-background);
+  --color-foreground: var(--playarg-foreground);
+  --color-card: var(--playarg-card);
+  --color-card-foreground: var(--playarg-card-foreground);
+  --color-popover: var(--playarg-popover);
+  --color-popover-foreground: var(--playarg-popover-foreground);
+  --color-primary: var(--playarg-primary);
+  --color-primary-foreground: var(--playarg-primary-foreground);
+  --color-secondary: var(--playarg-secondary);
+  --color-secondary-foreground: var(--playarg-secondary-foreground);
+  --color-muted: var(--playarg-muted);
+  --color-muted-foreground: var(--playarg-muted-foreground);
+  --color-border: var(--playarg-border);
+  --color-input: var(--playarg-input);
+  --color-ring: var(--playarg-ring);
+  --radius-sm: var(--playarg-radius-small);
+  --radius-md: var(--playarg-radius-medium);
+  --radius-lg: var(--playarg-radius-large);
+}
+
+/* Base */
+html,
+body {
+  font-family: var(--font-sans);
+  background: var(--playarg-background);
+  color: var(--playarg-foreground);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Glow utilities */
+.glow-text {
+  text-shadow: 0 0 18px rgba(0, 217, 255, 0.35);
+}
+
+.glow-border {
+  box-shadow: 0 0 0 1px var(--playarg-border), 0 0 18px rgba(0, 217, 255, 0.12);
+}
+
+/* Scrollbar dark */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--playarg-background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--playarg-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3f4d;
+}
+
+/* Code block base */
+pre,
+code {
+  font-family: var(--font-mono);
+}
+
+    </style>
+    <script src="/assets/tailwind.browser.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--playarg-background);
+    --color-foreground: var(--playarg-foreground);
+    --color-card: var(--playarg-card);
+    --color-card-foreground: var(--playarg-card-foreground);
+    --color-popover: var(--playarg-popover);
+    --color-popover-foreground: var(--playarg-popover-foreground);
+    --color-primary: var(--playarg-primary);
+    --color-primary-foreground: var(--playarg-primary-foreground);
+    --color-secondary: var(--playarg-secondary);
+    --color-secondary-foreground: var(--playarg-secondary-foreground);
+    --color-muted: var(--playarg-muted);
+    --color-muted-foreground: var(--playarg-muted-foreground);
+    --color-border: var(--playarg-border);
+    --color-input: var(--playarg-input);
+    --color-ring: var(--playarg-ring);
+    --radius-sm: var(--playarg-radius-small);
+    --radius-md: var(--playarg-radius-medium);
+    --radius-lg: var(--playarg-radius-large);
+  }
+  @layer base {
+    body { background: var(--playarg-background); color: var(--playarg-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--playarg-background); }
+      .text-background { color: var(--playarg-background); }
+      .border-background { border-color: var(--playarg-background); }
+      .ring-background { --tw-ring-color: var(--playarg-background); }
+      .bg-foreground { background-color: var(--playarg-foreground); }
+      .text-foreground { color: var(--playarg-foreground); }
+      .border-foreground { border-color: var(--playarg-foreground); }
+      .ring-foreground { --tw-ring-color: var(--playarg-foreground); }
+      .bg-card { background-color: var(--playarg-card); }
+      .text-card { color: var(--playarg-card); }
+      .border-card { border-color: var(--playarg-card); }
+      .ring-card { --tw-ring-color: var(--playarg-card); }
+      .bg-card-foreground { background-color: var(--playarg-card-foreground); }
+      .text-card-foreground { color: var(--playarg-card-foreground); }
+      .border-card-foreground { border-color: var(--playarg-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--playarg-card-foreground); }
+      .bg-popover { background-color: var(--playarg-popover); }
+      .text-popover { color: var(--playarg-popover); }
+      .border-popover { border-color: var(--playarg-popover); }
+      .ring-popover { --tw-ring-color: var(--playarg-popover); }
+      .bg-popover-foreground { background-color: var(--playarg-popover-foreground); }
+      .text-popover-foreground { color: var(--playarg-popover-foreground); }
+      .border-popover-foreground { border-color: var(--playarg-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--playarg-popover-foreground); }
+      .bg-primary { background-color: var(--playarg-primary); }
+      .text-primary { color: var(--playarg-primary); }
+      .border-primary { border-color: var(--playarg-primary); }
+      .ring-primary { --tw-ring-color: var(--playarg-primary); }
+      .bg-primary-foreground { background-color: var(--playarg-primary-foreground); }
+      .text-primary-foreground { color: var(--playarg-primary-foreground); }
+      .border-primary-foreground { border-color: var(--playarg-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--playarg-primary-foreground); }
+      .bg-secondary { background-color: var(--playarg-secondary); }
+      .text-secondary { color: var(--playarg-secondary); }
+      .border-secondary { border-color: var(--playarg-secondary); }
+      .ring-secondary { --tw-ring-color: var(--playarg-secondary); }
+      .bg-secondary-foreground { background-color: var(--playarg-secondary-foreground); }
+      .text-secondary-foreground { color: var(--playarg-secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--playarg-secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--playarg-secondary-foreground); }
+      .bg-muted { background-color: var(--playarg-muted); }
+      .text-muted { color: var(--playarg-muted); }
+      .border-muted { border-color: var(--playarg-muted); }
+      .ring-muted { --tw-ring-color: var(--playarg-muted); }
+      .bg-muted-foreground { background-color: var(--playarg-muted-foreground); }
+      .text-muted-foreground { color: var(--playarg-muted-foreground); }
+      .border-muted-foreground { border-color: var(--playarg-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--playarg-muted-foreground); }
+      .bg-border { background-color: var(--playarg-border); }
+      .text-border { color: var(--playarg-border); }
+      .border-border { border-color: var(--playarg-border); }
+      .ring-border { --tw-ring-color: var(--playarg-border); }
+      .bg-input { background-color: var(--playarg-input); }
+      .text-input { color: var(--playarg-input); }
+      .border-input { border-color: var(--playarg-input); }
+      .ring-input { --tw-ring-color: var(--playarg-input); }
+      .bg-ring { background-color: var(--playarg-ring); }
+      .text-ring { color: var(--playarg-ring); }
+      .border-ring { border-color: var(--playarg-ring); }
+      .ring-ring { --tw-ring-color: var(--playarg-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('playarg_theme');
+          if (t === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            document.documentElement.classList.remove('dark');
+          }
+        } catch(e) {}
+      })();
+    </script>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <!-- Top navigation -->
+    <header class="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[var(--playarg-border)] bg-[var(--playarg-background)]/90 backdrop-blur">
+      <div class="flex h-full items-center justify-between px-6">
+        <div class="flex items-center gap-3">
+          <a href="/" data-dom-id="nav-logo" class="flex items-center gap-2 text-lg font-semibold tracking-tight text-[var(--playarg-primary)] glow-text">
+            <img src="/assets/logo.png" class="h-8 w-auto rounded-md" alt="PlayARG" />
+            <span>PlayARG</span>
+          </a>
+        </div>
+            <nav class="flex items-center gap-4">
+      <a href="/rules" class="text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-foreground)]">规则</a>
+      <a href="/sponsors" class="text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-foreground)]">赞助我们</a>
+      <button data-dom-id="nav-search" class="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--playarg-border)] text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+        <i data-lucide="search" class="h-4 w-4"></i>
+      </button>
+      <a href="/messages" data-dom-id="nav-messages" class="relative flex h-9 w-9 items-center justify-center rounded-md border border-[var(--playarg-border)] text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+        <i data-lucide="mail" class="h-4 w-4"></i>
+        <span id="nav-messages-badge" class="absolute -right-1 -top-1 hidden min-w-[16px] rounded-full bg-[var(--playarg-state-error)] px-1 text-[10px] font-medium text-white"></span>
+      </a>
+      <a href="/notifications" data-dom-id="nav-notifications" class="relative flex h-9 w-9 items-center justify-center rounded-md border border-[var(--playarg-border)] text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+        <i data-lucide="bell" class="h-4 w-4"></i>
+        <span id="nav-notifications-badge" class="absolute -right-1 -top-1 hidden min-w-[16px] rounded-full bg-[var(--playarg-state-error)] px-1 text-[10px] font-medium text-white"></span>
+      </a>
+      <div id="auth-root" class="relative"></div>
+    </nav>
+      </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="fixed left-0 top-16 bottom-0 z-40 w-56 border-r border-[var(--playarg-border)] bg-[var(--playarg-card)]">
+      <nav class="flex flex-col gap-1 p-3">
+        <a href="/problems" data-dom-id="sidebar-problems" data-nav-key="problems" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+          <i data-lucide="book-open" class="h-[18px] w-[18px]"></i>
+          <span>题库</span>
+        </a>
+        <a href="/contests" data-dom-id="sidebar-contests" data-nav-key="contests" class="relative flex items-center gap-3 rounded-md bg-[var(--playarg-primary-subtle)] px-3 py-2.5 text-sm font-medium text-[var(--playarg-primary)] transition-colors">
+          <span class="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-[var(--playarg-primary)]"></span>
+          <i data-lucide="trophy" class="h-[18px] w-[18px]"></i>
+          <span>比赛</span>
+        </a>
+        <a href="/submissions" data-dom-id="sidebar-submissions" data-nav-key="submissions" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+          <i data-lucide="terminal" class="h-[18px] w-[18px]"></i>
+          <span>提交记录</span>
+        </a>
+        <a href="/discussions" data-dom-id="sidebar-discussion" data-nav-key="discussion" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+          <i data-lucide="message-square" class="h-[18px] w-[18px]"></i>
+          <span>讨论</span>
+        </a>
+        <a href="/announcement" data-dom-id="sidebar-announcement" data-nav-key="announcement" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+          <i data-lucide="megaphone" class="h-[18px] w-[18px]"></i>
+          <span>公告</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main content frame -->
+    <main id="main-content" class="ml-56 min-h-screen bg-[var(--playarg-background)] pt-16">
+      <div class="mx-auto max-w-3xl px-8 py-10">
+        <!-- Page title -->
+        <div class="mb-8 flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-semibold tracking-tight text-[var(--playarg-foreground)]">新建比赛</h1>
+            <p class="mt-1 text-sm text-[var(--playarg-muted-foreground)]">填写基础信息，稍后在下一步中添加题目。</p>
+          </div>
+          <div class="flex items-center gap-2 text-xs text-[var(--playarg-muted-foreground)]">
+            <span class="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--playarg-primary)] text-[var(--playarg-primary-foreground)] font-medium">1</span>
+            <span class="h-px w-6 bg-[var(--playarg-border)]"></span>
+            <span class="flex h-6 w-6 items-center justify-center rounded-full border border-[var(--playarg-border)] text-[var(--playarg-muted-foreground)]">2</span>
+          </div>
+        </div>
+
+        <!-- Form card -->
+        <section class="rounded-xl border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-8 shadow-sm">
+          <form id="contest-form" class="space-y-6" onsubmit="return false;">
+            <!-- Contest name -->
+            <div class="space-y-2">
+              <label for="contest-name" class="block text-sm font-medium text-[var(--playarg-foreground)]">比赛名称</label>
+              <div class="relative">
+                <i data-lucide="trophy" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--playarg-muted-foreground)]"></i>
+                <input id="contest-name" data-dom-id="form-contest-name" type="text" placeholder="例如：2026 暑期算法挑战赛" class="h-10 w-full rounded-lg border border-[var(--playarg-input)] bg-[var(--playarg-background)] pl-9 pr-3 text-sm text-[var(--playarg-foreground)] placeholder:text-[var(--playarg-muted-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />
+              </div>
+            </div>
+
+            <!-- Contest type + mode (two columns) -->
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <!-- Contest type -->
+              <div class="space-y-2" data-dom-id="form-type">
+                <span class="block text-sm font-medium text-[var(--playarg-foreground)]">参赛形式</span>
+                <div class="flex gap-3">
+                  <label class="flex flex-1 cursor-pointer items-center gap-2 rounded-lg border border-[var(--playarg-input)] bg-[var(--playarg-background)] p-3 transition-colors hover:border-[var(--playarg-primary)] has-[:checked]:border-[var(--playarg-primary)] has-[:checked]:bg-[var(--playarg-primary-subtle)]">
+                    <input type="radio" name="contest-type" value="individual" checked class="h-4 w-4 accent-[var(--playarg-primary)]" />
+                    <span class="flex flex-col">
+                      <span class="text-sm font-medium text-[var(--playarg-foreground)]">个人赛</span>
+                      <span class="text-xs text-[var(--playarg-muted-foreground)]">独立参赛</span>
+                    </span>
+                  </label>
+                  <label class="flex flex-1 cursor-pointer items-center gap-2 rounded-lg border border-[var(--playarg-input)] bg-[var(--playarg-background)] p-3 transition-colors hover:border-[var(--playarg-primary)] has-[:checked]:border-[var(--playarg-primary)] has-[:checked]:bg-[var(--playarg-primary-subtle)]">
+                    <input type="radio" name="contest-type" value="team" class="h-4 w-4 accent-[var(--playarg-primary)]" />
+                    <span class="flex flex-col">
+                      <span class="text-sm font-medium text-[var(--playarg-foreground)]">组队赛</span>
+                      <span class="text-xs text-[var(--playarg-muted-foreground)]">队伍参赛</span>
+                    </span>
+                  </label>
+                </div>
+                <div id="team-size-wrap" class="hidden">
+                  <label for="team-size" class="block text-xs font-medium text-[var(--playarg-muted-foreground)]">每队人数（2-10）</label>
+                  <div class="relative mt-1">
+                    <i data-lucide="users" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--playarg-muted-foreground)]"></i>
+                    <input id="team-size" type="number" min="2" max="10" value="4" class="h-9 w-full rounded-md border border-[var(--playarg-input)] bg-[var(--playarg-background)] pl-9 pr-3 text-sm text-[var(--playarg-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contest mode -->
+              <div class="space-y-2" data-dom-id="form-mode">
+                <span class="block text-sm font-medium text-[var(--playarg-foreground)]">比赛方式</span>
+                <div class="flex gap-3">
+                  <label class="flex flex-1 cursor-pointer items-center gap-2 rounded-lg border border-[var(--playarg-input)] bg-[var(--playarg-background)] p-3 transition-colors hover:border-[var(--playarg-primary)] has-[:checked]:border-[var(--playarg-primary)] has-[:checked]:bg-[var(--playarg-primary-subtle)]">
+                    <input type="radio" name="contest-mode" value="checkpoint" checked class="h-4 w-4 accent-[var(--playarg-primary)]" />
+                    <span class="flex flex-col">
+                      <span class="text-sm font-medium text-[var(--playarg-foreground)]">闯关</span>
+                      <span class="text-xs text-[var(--playarg-muted-foreground)]">按顺序解锁</span>
+                    </span>
+                  </label>
+                  <label class="flex flex-1 cursor-pointer items-center gap-2 rounded-lg border border-[var(--playarg-input)] bg-[var(--playarg-background)] p-3 transition-colors hover:border-[var(--playarg-primary)] has-[:checked]:border-[var(--playarg-primary)] has-[:checked]:bg-[var(--playarg-primary-subtle)]">
+                    <input type="radio" name="contest-mode" value="simultaneous" class="h-4 w-4 accent-[var(--playarg-primary)]" />
+                    <span class="flex flex-col">
+                      <span class="text-sm font-medium text-[var(--playarg-foreground)]">同时</span>
+                      <span class="text-xs text-[var(--playarg-muted-foreground)]">全部开放</span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contest mode toggle -->
+            <div class="space-y-2">
+              <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-[var(--playarg-input)] bg-[var(--playarg-background)] p-4 transition-colors hover:border-[var(--playarg-primary)] has-[:checked]:border-[var(--playarg-primary)] has-[:checked]:bg-[var(--playarg-primary-subtle)]">
+                <input id="contest-mode-toggle" type="checkbox" checked class="h-4 w-4 rounded border-[var(--playarg-border)] bg-[var(--playarg-background)] text-[var(--playarg-primary)] accent-[var(--playarg-primary)]" />
+                <span class="flex flex-col">
+                  <span class="text-sm font-medium text-[var(--playarg-foreground)]">比赛模式</span>
+                  <span class="text-xs text-[var(--playarg-muted-foreground)]">只统计比赛时间内的提交，并隐藏他人答案</span>
+                </span>
+              </label>
+            </div>
+
+            <!-- Time range -->
+            <div class="grid gap-6 md:grid-cols-2">
+              <div class="space-y-2">
+                <label for="start-time" class="block text-sm font-medium text-[var(--playarg-foreground)]">开始时间</label>
+                <div class="relative">
+                  <i data-lucide="calendar" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--playarg-muted-foreground)]"></i>
+                  <input id="start-time" data-dom-id="form-start-time" type="datetime-local" class="h-10 w-full rounded-lg border border-[var(--playarg-input)] bg-[var(--playarg-background)] pl-9 pr-3 text-sm text-[var(--playarg-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />
+                </div>
+              </div>
+              <div class="space-y-2">
+                <label for="end-time" class="block text-sm font-medium text-[var(--playarg-foreground)]">结束时间</label>
+                <div class="relative">
+                  <i data-lucide="calendar-clock" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--playarg-muted-foreground)]"></i>
+                  <input id="end-time" data-dom-id="form-end-time" type="datetime-local" class="h-10 w-full rounded-lg border border-[var(--playarg-input)] bg-[var(--playarg-background)] pl-9 pr-3 text-sm text-[var(--playarg-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div class="space-y-2">
+              <label for="description" class="block text-sm font-medium text-[var(--playarg-foreground)]">比赛说明</label>
+              <textarea id="description" data-dom-id="form-description" rows="5" placeholder="介绍比赛规则、奖励、注意事项等" class="w-full rounded-lg border border-[var(--playarg-input)] bg-[var(--playarg-background)] p-3 text-sm text-[var(--playarg-foreground)] placeholder:text-[var(--playarg-muted-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]"></textarea>
+            </div>
+
+            <!-- Help text -->
+            <div class="rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-primary-dim)] p-4">
+              <div class="flex items-start gap-3">
+                <i data-lucide="info" class="mt-0.5 h-4 w-4 shrink-0 text-[var(--playarg-primary)]"></i>
+                <ul class="space-y-1 text-xs text-[var(--playarg-muted-foreground)]">
+                  <li>比赛开始后举办者可修改说明。</li>
+                  <li>结束后必须加题解。</li>
+                  <li>结束时间可设为无限。</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center justify-end gap-3 pt-2">
+              <a href="/contests" class="rounded-lg px-4 py-2 text-sm font-medium text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-foreground)]">取消</a>
+              <button data-dom-id="btn-next-step" type="button" class="inline-flex items-center gap-2 rounded-lg bg-[var(--playarg-primary)] px-5 py-2 text-sm font-medium text-[var(--playarg-primary-foreground)] shadow-[var(--shadow-2)] transition-all hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]">
+                <span>下一步</span>
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="ml-56 border-t border-[var(--playarg-border)] bg-[var(--playarg-card)] py-6">
+      <div class="px-8 text-xs text-[var(--playarg-muted-foreground)]">
+        PlayARG © 2026
+      </div>
+    </footer>
+
+    <script src="/auth.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  function pad(n) { return n < 10 ? '0' + n : n; }
+  function formatLocalDateTime(d) {
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
+
+  var startInput = document.getElementById('start-time');
+  var endInput = document.getElementById('end-time');
+  var now = new Date();
+  var oneDayLater = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+  startInput.value = formatLocalDateTime(now);
+  endInput.value = formatLocalDateTime(oneDayLater);
+
+  // Toggle team size input based on contest type
+  document.querySelectorAll('input[name="contest-type"]').forEach(function (radio) {
+    radio.addEventListener('change', function () {
+      var wrap = document.getElementById('team-size-wrap');
+      if (wrap) wrap.classList.toggle('hidden', radio.value !== 'team');
+    });
+  });
+
+  document.querySelector('[data-dom-id="btn-next-step"]').addEventListener('click', function () {
+    var name = document.getElementById('contest-name').value.trim();
+    var mode = document.querySelector('input[name="contest-mode"]:checked').value;
+    var contestMode = document.getElementById('contest-mode-toggle').checked;
+    var start = startInput.value;
+    var end = endInput.value;
+    var description = document.getElementById('description').value.trim();
+    var isTeam = document.querySelector('input[name="contest-type"]:checked').value === 'team';
+    var teamSize = parseInt(document.getElementById('team-size').value, 10) || 4;
+
+    if (!name) { alert('请填写比赛名称'); return; }
+    if (!start || !end) { alert('请填写开始和结束时间'); return; }
+    if (new Date(start) >= new Date(end)) { alert('结束时间必须晚于开始时间'); return; }
+    if (isTeam && (teamSize < 2 || teamSize > 10)) { alert('每队人数需在 2-10 之间'); return; }
+
+    var btn = document.querySelector('[data-dom-id="btn-next-step"]');
+    btn.disabled = true;
+    btn.innerHTML = '<span>创建中...</span><i data-lucide="loader-2" class="h-4 w-4 animate-spin"></i>';
+    lucide.createIcons();
+
+    fetch('/api/contests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'create',
+        item: {
+          title: name,
+          description: description,
+          startTime: new Date(start).toISOString(),
+          endTime: new Date(end).toISOString(),
+          mode: mode,
+          contestMode: contestMode,
+          isTeamContest: isTeam,
+          teamSize: isTeam ? teamSize : 1,
+          problems: []
+        }
+      })
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      if (data.ok) {
+        var newId = (data.data && data.data.id) ? data.data.id : '';
+        window.location.href = '/contest-problems?id=' + encodeURIComponent(newId);
+      } else {
+        alert(data.error || '创建比赛失败');
+        btn.disabled = false;
+        btn.innerHTML = '<span>下一步</span><i data-lucide="arrow-right" class="h-4 w-4"></i>';
+        lucide.createIcons();
+      }
+    })
+    .catch(function (err) {
+      alert('网络错误，请重试');
+      btn.disabled = false;
+      btn.innerHTML = '<span>下一步</span><i data-lucide="arrow-right" class="h-4 w-4"></i>';
+      lucide.createIcons();
+    });
+  });
+})();
+</script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

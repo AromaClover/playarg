@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    <link rel="apple-touch-icon" href="/assets/logo.png">
+    <title>用户个人页 - PlayARG</title>
+    <style id="theme-vars">
+/* PlayARG — Dark geek theme tokens */
+
+:root {
+  /* Core dark surfaces */
+  --playarg-background: #0b0c10;
+  --playarg-foreground: #e8e8ec;
+  --playarg-card: #111318;
+  --playarg-card-foreground: #e8e8ec;
+  --playarg-popover: #151821;
+  --playarg-popover-foreground: #e8e8ec;
+
+  /* Primary accent — cyan/teal glow */
+  --playarg-primary: #00d9ff;
+  --playarg-primary-foreground: #030507;
+  --playarg-primary-subtle: rgba(0, 217, 255, 0.12);
+  --playarg-primary-dim: rgba(0, 217, 255, 0.06);
+
+  /* Muted / secondary */
+  --playarg-muted: #1a1d25;
+  --playarg-muted-foreground: #8a8f98;
+  --playarg-secondary: #1e212b;
+  --playarg-secondary-foreground: #d1d5db;
+
+  /* Borders & inputs */
+  --playarg-border: #2a2e3a;
+  --playarg-input: #2a2e3a;
+  --playarg-ring: rgba(0, 217, 255, 0.45);
+
+  /* Radius */
+  --playarg-radius-small: 4px;
+  --playarg-radius-medium: 8px;
+  --playarg-radius-large: 12px;
+
+  /* State colors */
+  --playarg-state-success: #22c55e;
+  --playarg-state-warning: #f59e0b;
+  --playarg-state-error: #ef4444;
+  --playarg-state-info: #3b82f6;
+
+  /* Code / data */
+  --playarg-code-bg: #0d0f14;
+  --playarg-code-fg: #e8e8ec;
+  --playarg-accent-purple: #a855f7;
+  --playarg-accent-green: #4ade80;
+
+  /* Spacing scale */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 80px;
+
+  /* Typography */
+  --font-sans: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", "Noto Sans SC", monospace;
+
+  /* Shadows */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.15);
+  --shadow-2: 0 8px 24px -8px rgba(0, 217, 255, 0.14);
+  --shadow-3: 0 24px 60px -20px rgba(0, 0, 0, 0.55);
+}
+
+@theme inline {
+  --color-background: var(--playarg-background);
+  --color-foreground: var(--playarg-foreground);
+  --color-card: var(--playarg-card);
+  --color-card-foreground: var(--playarg-card-foreground);
+  --color-popover: var(--playarg-popover);
+  --color-popover-foreground: var(--playarg-popover-foreground);
+  --color-primary: var(--playarg-primary);
+  --color-primary-foreground: var(--playarg-primary-foreground);
+  --color-secondary: var(--playarg-secondary);
+  --color-secondary-foreground: var(--playarg-secondary-foreground);
+  --color-muted: var(--playarg-muted);
+  --color-muted-foreground: var(--playarg-muted-foreground);
+  --color-border: var(--playarg-border);
+  --color-input: var(--playarg-input);
+  --color-ring: var(--playarg-ring);
+  --radius-sm: var(--playarg-radius-small);
+  --radius-md: var(--playarg-radius-medium);
+  --radius-lg: var(--playarg-radius-large);
+}
+
+/* Base */
+html,
+body {
+  font-family: var(--font-sans);
+  background: var(--playarg-background);
+  color: var(--playarg-foreground);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Glow utilities */
+.glow-text {
+  text-shadow: 0 0 18px rgba(0, 217, 255, 0.35);
+}
+
+.glow-border {
+  box-shadow: 0 0 0 1px var(--playarg-border), 0 0 18px rgba(0, 217, 255, 0.12);
+}
+
+/* Scrollbar dark */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--playarg-background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--playarg-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3f4d;
+}
+
+/* Code block base */
+pre,
+code {
+  font-family: var(--font-mono);
+}
+
+    </style>
+    <script src="/assets/tailwind.browser.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--playarg-background);
+    --color-foreground: var(--playarg-foreground);
+    --color-card: var(--playarg-card);
+    --color-card-foreground: var(--playarg-card-foreground);
+    --color-popover: var(--playarg-popover);
+    --color-popover-foreground: var(--playarg-popover-foreground);
+    --color-primary: var(--playarg-primary);
+    --color-primary-foreground: var(--playarg-primary-foreground);
+    --color-secondary: var(--playarg-secondary);
+    --color-secondary-foreground: var(--playarg-secondary-foreground);
+    --color-muted: var(--playarg-muted);
+    --color-muted-foreground: var(--playarg-muted-foreground);
+    --color-border: var(--playarg-border);
+    --color-input: var(--playarg-input);
+    --color-ring: var(--playarg-ring);
+    --radius-sm: var(--playarg-radius-small);
+    --radius-md: var(--playarg-radius-medium);
+    --radius-lg: var(--playarg-radius-large);
+  }
+  @layer base {
+    body { background: var(--playarg-background); color: var(--playarg-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--playarg-background); }
+      .text-background { color: var(--playarg-background); }
+      .border-background { border-color: var(--playarg-background); }
+      .ring-background { --tw-ring-color: var(--playarg-background); }
+      .bg-foreground { background-color: var(--playarg-foreground); }
+      .text-foreground { color: var(--playarg-foreground); }
+      .border-foreground { border-color: var(--playarg-foreground); }
+      .ring-foreground { --tw-ring-color: var(--playarg-foreground); }
+      .bg-card { background-color: var(--playarg-card); }
+      .text-card { color: var(--playarg-card); }
+      .border-card { border-color: var(--playarg-card); }
+      .ring-card { --tw-ring-color: var(--playarg-card); }
+      .bg-card-foreground { background-color: var(--playarg-card-foreground); }
+      .text-card-foreground { color: var(--playarg-card-foreground); }
+      .border-card-foreground { border-color: var(--playarg-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--playarg-card-foreground); }
+      .bg-popover { background-color: var(--playarg-popover); }
+      .text-popover { color: var(--playarg-popover); }
+      .border-popover { border-color: var(--playarg-popover); }
+      .ring-popover { --tw-ring-color: var(--playarg-popover); }
+      .bg-popover-foreground { background-color: var(--playarg-popover-foreground); }
+      .text-popover-foreground { color: var(--playarg-popover-foreground); }
+      .border-popover-foreground { border-color: var(--playarg-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--playarg-popover-foreground); }
+      .bg-primary { background-color: var(--playarg-primary); }
+      .text-primary { color: var(--playarg-primary); }
+      .border-primary { border-color: var(--playarg-primary); }
+      .ring-primary { --tw-ring-color: var(--playarg-primary); }
+      .bg-primary-foreground { background-color: var(--playarg-primary-foreground); }
+      .text-primary-foreground { color: var(--playarg-primary-foreground); }
+      .border-primary-foreground { border-color: var(--playarg-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--playarg-primary-foreground); }
+      .bg-secondary { background-color: var(--playarg-secondary); }
+      .text-secondary { color: var(--playarg-secondary); }
+      .border-secondary { border-color: var(--playarg-secondary); }
+      .ring-secondary { --tw-ring-color: var(--playarg-secondary); }
+      .bg-secondary-foreground { background-color: var(--playarg-secondary-foreground); }
+      .text-secondary-foreground { color: var(--playarg-secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--playarg-secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--playarg-secondary-foreground); }
+      .bg-muted { background-color: var(--playarg-muted); }
+      .text-muted { color: var(--playarg-muted); }
+      .border-muted { border-color: var(--playarg-muted); }
+      .ring-muted { --tw-ring-color: var(--playarg-muted); }
+      .bg-muted-foreground { background-color: var(--playarg-muted-foreground); }
+      .text-muted-foreground { color: var(--playarg-muted-foreground); }
+      .border-muted-foreground { border-color: var(--playarg-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--playarg-muted-foreground); }
+      .bg-border { background-color: var(--playarg-border); }
+      .text-border { color: var(--playarg-border); }
+      .border-border { border-color: var(--playarg-border); }
+      .ring-border { --tw-ring-color: var(--playarg-border); }
+      .bg-input { background-color: var(--playarg-input); }
+      .text-input { color: var(--playarg-input); }
+      .border-input { border-color: var(--playarg-input); }
+      .ring-input { --tw-ring-color: var(--playarg-input); }
+      .bg-ring { background-color: var(--playarg-ring); }
+      .text-ring { color: var(--playarg-ring); }
+      .border-ring { border-color: var(--playarg-ring); }
+      .ring-ring { --tw-ring-color: var(--playarg-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('playarg_theme');
+          if (t === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            document.documentElement.classList.remove('dark');
+          }
+        } catch(e) {}
+      })();
+    </script>
+</head>
+<body class="min-h-screen font-sans antialiased">
+
+<!-- PlayARG shared shell fragment: top nav + sidebar + main frame + footer -->
+<!-- Pages include this structure verbatim and fill #main-content -->
+
+<!-- Top navigation -->
+<header class="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[var(--playarg-border)] bg-[var(--playarg-background)]/90 backdrop-blur">
+  <div class="flex h-full items-center justify-between px-6">
+    <div class="flex items-center gap-3">
+      <a href="/" data-dom-id="nav-logo" class="flex items-center gap-2 text-lg font-semibold tracking-tight text-[var(--playarg-primary)] glow-text">
+        <img src="/assets/logo.png" class="h-8 w-auto rounded-md" alt="PlayARG" />
+        <span>PlayARG</span>
+      </a>
+    </div>
+        <nav class="flex items-center gap-4">
+      <a href="/rules" class="text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-foreground)]">规则</a>
+      <a href="/sponsors" class="text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-foreground)]">赞助我们</a>
+      <button data-dom-id="nav-search" class="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--playarg-border)] text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+        <i data-lucide="search" class="h-4 w-4"></i>
+      </button>
+      <a href="/messages" data-dom-id="nav-messages" class="relative flex h-9 w-9 items-center justify-center rounded-md border border-[var(--playarg-border)] text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+        <i data-lucide="mail" class="h-4 w-4"></i>
+        <span id="nav-messages-badge" class="absolute -right-1 -top-1 hidden min-w-[16px] rounded-full bg-[var(--playarg-state-error)] px-1 text-[10px] font-medium text-white"></span>
+      </a>
+      <a href="/notifications" data-dom-id="nav-notifications" class="relative flex h-9 w-9 items-center justify-center rounded-md border border-[var(--playarg-border)] text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+        <i data-lucide="bell" class="h-4 w-4"></i>
+        <span id="nav-notifications-badge" class="absolute -right-1 -top-1 hidden min-w-[16px] rounded-full bg-[var(--playarg-state-error)] px-1 text-[10px] font-medium text-white"></span>
+      </a>
+      <div id="auth-root" class="relative"></div>
+    </nav>
+  </div>
+</header>
+
+<!-- Sidebar -->
+<aside class="fixed left-0 top-16 bottom-0 z-40 w-56 border-r border-[var(--playarg-border)] bg-[var(--playarg-card)]">
+  <nav class="flex flex-col gap-1 p-3">
+    <a href="/problems" data-dom-id="sidebar-problems" data-nav-key="problems" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+      <i data-lucide="book-open" class="h-[18px] w-[18px]"></i>
+      <span>题库</span>
+    </a>
+    <a href="/contests" data-dom-id="sidebar-contests" data-nav-key="contests" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+      <i data-lucide="trophy" class="h-[18px] w-[18px]"></i>
+      <span>比赛</span>
+    </a>
+    <a href="/submissions" data-dom-id="sidebar-submissions" data-nav-key="submissions" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+      <i data-lucide="terminal" class="h-[18px] w-[18px]"></i>
+      <span>提交记录</span>
+    </a>
+    <a href="/discussions" data-dom-id="sidebar-discussion" data-nav-key="discussion" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+      <i data-lucide="message-square" class="h-[18px] w-[18px]"></i>
+      <span>讨论</span>
+    </a>
+    <a href="/announcement" data-dom-id="sidebar-announcement" data-nav-key="announcement" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+      <i data-lucide="megaphone" class="h-[18px] w-[18px]"></i>
+      <span>公告</span>
+    </a>
+  </nav>
+</aside>
+
+<!-- Main content frame -->
+<main id="main-content" class="ml-56 min-h-screen pt-16 bg-[var(--playarg-background)]">
+  <div class="p-6">
+    <div class="grid grid-cols-12 gap-6">
+      <!-- Main column -->
+      <div class="col-span-12 lg:col-span-9 space-y-6">
+        <!-- Profile header -->
+        <section class="rounded-[var(--playarg-radius-large)] border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-6 flex flex-col sm:flex-row items-start gap-6">
+          <div id="profile-avatar-wrap" class="relative flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[var(--playarg-primary)] to-[var(--playarg-accent-purple)] text-[var(--playarg-primary-foreground)] shadow-[var(--shadow-2)] overflow-hidden">
+            <i id="profile-avatar-icon" data-lucide="user" class="h-12 w-12"></i>
+            <img id="profile-avatar-img" class="absolute inset-0 hidden h-full w-full object-cover" alt="头像" />
+            <button id="profile-avatar-upload" type="button" class="absolute inset-0 hidden items-center justify-center bg-black/50 text-xs font-medium text-white opacity-0 transition-opacity hover:opacity-100">
+              更换头像
+            </button>
+            <input id="profile-avatar-input" type="file" accept="image/png,image/jpeg,image/gif,image/webp" class="hidden" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-3">
+              <h1 id="profile-username" class="text-2xl font-semibold tracking-tight text-[var(--playarg-primary)]">CyberOIer</h1>
+              <span id="profile-role-badge" class="hidden inline-flex items-center rounded-full bg-[var(--playarg-primary-subtle)] px-2.5 py-0.5 text-xs font-medium text-[var(--playarg-primary)]">管理员</span>
+            </div>
+            <div class="mt-2 flex flex-wrap items-center gap-4 text-sm text-[var(--playarg-muted-foreground)] font-mono">
+              <span class="inline-flex items-center gap-1.5"><i data-lucide="fingerprint" class="h-4 w-4"></i> UID: <span id="profile-uid">114514</span></span>
+              <span class="inline-flex items-center gap-1.5"><i data-lucide="calendar" class="h-4 w-4"></i> <span id="profile-joined">2023-09-12</span> 加入</span>
+            </div>
+          </div>
+          <div id="profile-actions" class="flex shrink-0 flex-wrap items-center justify-end gap-2"></div>
+        </section>
+
+        <!-- Stats row -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <article class="rounded-[var(--playarg-radius-medium)] border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-4 transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-2)]">
+            <div class="flex items-center gap-2 text-[var(--playarg-muted-foreground)] mb-2">
+              <i data-lucide="check-circle" class="h-4 w-4 text-[var(--playarg-state-success)]"></i>
+              <span class="text-xs">通过题数</span>
+            </div>
+            <p id="stat-solved" class="text-2xl font-semibold text-[var(--playarg-foreground)]">0</p>
+          </article>
+          <article class="rounded-[var(--playarg-radius-medium)] border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-4 transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-2)]">
+            <div class="flex items-center gap-2 text-[var(--playarg-muted-foreground)] mb-2">
+              <i data-lucide="trophy" class="h-4 w-4 text-[var(--playarg-state-warning)]"></i>
+              <span class="text-xs">比赛场次</span>
+            </div>
+            <p id="stat-contests" class="text-2xl font-semibold text-[var(--playarg-foreground)]">0</p>
+          </article>
+          <article class="rounded-[var(--playarg-radius-medium)] border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-4 transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-2)]">
+            <div class="flex items-center gap-2 text-[var(--playarg-muted-foreground)] mb-2">
+              <i data-lucide="terminal" class="h-4 w-4 text-[var(--playarg-state-info)]"></i>
+              <span class="text-xs">提交次数</span>
+            </div>
+            <p id="stat-submissions" class="text-2xl font-semibold text-[var(--playarg-foreground)]">0</p>
+          </article>
+          <article class="rounded-[var(--playarg-radius-medium)] border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-4 transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-2)]">
+            <div class="flex items-center gap-2 text-[var(--playarg-muted-foreground)] mb-2">
+              <i data-lucide="target" class="h-4 w-4 text-[var(--playarg-primary)]"></i>
+              <span class="text-xs">通过率</span>
+            </div>
+            <p id="stat-passRate" class="text-2xl font-semibold text-[var(--playarg-foreground)]">0.0%</p>
+          </article>
+        </section>
+
+        <!-- Tabs -->
+        <section class="rounded-[var(--playarg-radius-large)] border border-[var(--playarg-border)] bg-[var(--playarg-card)] overflow-hidden">
+          <div class="flex items-center border-b border-[var(--playarg-border)]" role="tablist">
+            <button type="button" class="tab-btn group relative px-5 py-3 text-sm font-medium text-[var(--playarg-foreground)] transition-colors hover:text-[var(--playarg-primary)]" data-target="panel-submissions" aria-selected="true" role="tab">
+              近期提交
+              <span class="tab-indicator absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--playarg-primary)]"></span>
+            </button>
+            <button type="button" class="tab-btn group relative px-5 py-3 text-sm font-medium text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-primary)]" data-target="panel-contests" aria-selected="false" role="tab">
+              近期比赛
+              <span class="tab-indicator absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--playarg-primary)] opacity-0 transition-opacity"></span>
+            </button>
+          </div>
+          <div class="p-4">
+            <div id="panel-submissions" class="tab-panel" role="tabpanel">
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="border-b border-[var(--playarg-border)] text-left text-xs text-[var(--playarg-muted-foreground)]">
+                      <th class="py-2 pr-4 font-medium">时间</th>
+                      <th class="py-2 pr-4 font-medium">题目</th>
+                      <th class="py-2 pr-4 font-medium">结果</th>
+                      <th class="py-2 pr-4 font-medium">语言</th>
+                      <th class="py-2 pr-4 font-medium">耗时</th>
+                    </tr>
+                  </thead>
+                  <tbody id="submissions-body" class="text-[var(--playarg-foreground)]">
+                    <tr class="border-b border-[var(--playarg-border)] transition-colors hover:bg-[var(--playarg-muted)]">
+                      <td class="py-3 pr-4 font-mono text-[var(--playarg-muted-foreground)]" colspan="5">暂无近期提交</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div id="panel-contests" class="tab-panel hidden" role="tabpanel">
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="border-b border-[var(--playarg-border)] text-left text-xs text-[var(--playarg-muted-foreground)]">
+                      <th class="py-2 pr-4 font-medium">比赛</th>
+                      <th class="py-2 pr-4 font-medium">名次</th>
+                      <th class="py-2 pr-4 font-medium">得分</th>
+                      <th class="py-2 pr-4 font-medium">时间</th>
+                    </tr>
+                  </thead>
+                  <tbody id="contests-body" class="text-[var(--playarg-foreground)]">
+                    <tr class="border-b border-[var(--playarg-border)] transition-colors hover:bg-[var(--playarg-muted)]">
+                      <td class="py-3 pr-4 font-mono text-[var(--playarg-muted-foreground)]" colspan="4">暂无近期比赛记录</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right sidebar -->
+      <aside class="col-span-12 lg:col-span-3 space-y-6">
+        <section class="rounded-[var(--playarg-radius-large)] border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-5">
+          <h2 class="mb-4 text-sm font-semibold text-[var(--playarg-foreground)] flex items-center gap-2">
+            <i data-lucide="tags" class="h-4 w-4 text-[var(--playarg-primary)]"></i> 个人标签
+          </h2>
+          <div id="tags-container" class="flex flex-wrap gap-2">
+            <span class="inline-flex items-center rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-muted)] px-2.5 py-1 text-xs text-[var(--playarg-secondary-foreground)]">加载中…</span>
+          </div>
+
+          <h2 class="mt-6 mb-4 text-sm font-semibold text-[var(--playarg-foreground)] flex items-center gap-2">
+            <i data-lucide="zap" class="h-4 w-4 text-[var(--playarg-primary)]"></i> 擅长领域
+          </h2>
+          <div id="skills-container" class="space-y-3">
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-[var(--playarg-muted-foreground)]">加载中…</span>
+                <span class="text-[var(--playarg-primary)]">0%</span>
+              </div>
+              <div class="h-1.5 rounded-full bg-[var(--playarg-muted)]">
+                <div class="h-1.5 rounded-full bg-[var(--playarg-primary)]" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="rounded-[var(--playarg-radius-large)] border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-5">
+          <h2 class="mb-4 text-sm font-semibold text-[var(--playarg-foreground)] flex items-center gap-2">
+            <i data-lucide="award" class="h-4 w-4 text-[var(--playarg-primary)]"></i> 获得成就
+          </h2>
+          <div id="achievements-container" class="grid grid-cols-2 gap-3">
+            <div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-muted)] p-3 text-center transition-colors hover:border-[var(--playarg-primary)]">
+              <i data-lucide="loader-2" class="mx-auto h-6 w-6 text-[var(--playarg-muted-foreground)] mb-1"></i>
+              <p class="text-xs text-[var(--playarg-secondary-foreground)]">加载中…</p>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<!-- Edit profile modal -->
+<div id="edit-profile-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 p-4" style="backdrop-filter: blur(4px);">
+  <div class="w-full max-w-md rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-6 shadow-2xl">
+    <div class="mb-4 flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-[var(--playarg-foreground)]">编辑资料</h3>
+      <button id="edit-profile-close" class="flex h-8 w-8 items-center justify-center rounded-md text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)]">
+        <i data-lucide="x" class="h-4 w-4"></i>
+      </button>
+    </div>
+    <div class="space-y-4">
+      <div id="edit-profile-feedback" class="hidden rounded-md border px-3 py-2 text-sm"></div>
+      <div>
+        <label class="mb-1 block text-xs font-medium text-[var(--playarg-muted-foreground)]">邮箱</label>
+        <input id="edit-profile-email" type="email" class="h-10 w-full rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-3 text-sm text-[var(--playarg-foreground)] placeholder:text-[var(--playarg-muted-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-medium text-[var(--playarg-muted-foreground)]">新密码（留空表示不改）</label>
+        <input id="edit-profile-password" type="password" class="h-10 w-full rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-3 text-sm text-[var(--playarg-foreground)] placeholder:text-[var(--playarg-muted-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-medium text-[var(--playarg-muted-foreground)]">确认新密码</label>
+        <input id="edit-profile-password2" type="password" class="h-10 w-full rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-3 text-sm text-[var(--playarg-foreground)] placeholder:text-[var(--playarg-muted-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />
+      </div>
+      <div class="flex justify-end gap-2">
+        <button id="edit-profile-cancel" class="h-9 rounded-md border border-[var(--playarg-border)] px-4 text-sm text-[var(--playarg-foreground)] transition-colors hover:bg-[var(--playarg-muted)]">取消</button>
+        <button id="edit-profile-save" class="h-9 rounded-md bg-[var(--playarg-primary)] px-4 text-sm font-medium text-[var(--playarg-primary-foreground)] transition-all hover:brightness-110">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="ml-56 border-t border-[var(--playarg-border)] bg-[var(--playarg-card)] py-6">
+  <div class="px-8 text-xs text-[var(--playarg-muted-foreground)]">
+    PlayARG © 2026
+  </div>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    lucide.createIcons();
+
+    var tabBtns = document.querySelectorAll('.tab-btn');
+    var panels = document.querySelectorAll('.tab-panel');
+
+    tabBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var target = btn.getAttribute('data-target');
+
+        tabBtns.forEach(function (b) {
+          b.setAttribute('aria-selected', 'false');
+          b.classList.remove('text-[var(--playarg-foreground)]');
+          b.classList.add('text-[var(--playarg-muted-foreground)]');
+          var indicator = b.querySelector('.tab-indicator');
+          if (indicator) indicator.classList.add('opacity-0');
+        });
+
+        btn.setAttribute('aria-selected', 'true');
+        btn.classList.remove('text-[var(--playarg-muted-foreground)]');
+        btn.classList.add('text-[var(--playarg-foreground)]');
+        var activeIndicator = btn.querySelector('.tab-indicator');
+        if (activeIndicator) activeIndicator.classList.remove('opacity-0');
+
+        panels.forEach(function (panel) {
+          if (panel.id === target) {
+            panel.classList.remove('hidden');
+          } else {
+            panel.classList.add('hidden');
+          }
+        });
+      });
+    });
+  });
+</script>
+<script>
+(function () {
+  'use strict';
+
+  function getLocalUser() {
+    try {
+      var raw = localStorage.getItem('playarg_user');
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  var currentUser = getLocalUser();
+  var currentTargetUser = null;
+
+  function escapeHtml(str) {
+    if (str == null) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '—';
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return escapeHtml(iso);
+    return d.toISOString().slice(0, 10);
+  }
+
+  function achievementColorClass(icon) {
+    switch (icon) {
+      case 'flame': return 'text-[var(--playarg-state-warning)]';
+      case 'star': return 'text-[var(--playarg-primary)]';
+      case 'crown': return 'text-[var(--playarg-accent-purple)]';
+      case 'trending-up': return 'text-[var(--playarg-accent-green)]';
+      case 'shield-check': return 'text-[var(--playarg-state-info)]';
+      case 'gem': return 'text-[var(--playarg-primary)]';
+      default: return 'text-[var(--playarg-primary)]';
+    }
+  }
+
+  function renderTags(tags) {
+    var container = document.getElementById('tags-container');
+    if (!container) return;
+    if (!tags || !tags.length) {
+      container.innerHTML = '<span class="inline-flex items-center rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-muted)] px-2.5 py-1 text-xs text-[var(--playarg-secondary-foreground)]">暂无标签</span>';
+      return;
+    }
+    container.innerHTML = tags.map(function (tag) {
+      return '<span class="inline-flex items-center rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-muted)] px-2.5 py-1 text-xs text-[var(--playarg-secondary-foreground)] transition-colors hover:border-[var(--playarg-primary)] hover:text-[var(--playarg-primary)]">' + escapeHtml(tag) + '</span>';
+    }).join('');
+  }
+
+  function renderSkills(skills) {
+    var container = document.getElementById('skills-container');
+    if (!container) return;
+    if (!skills || !skills.length) {
+      container.innerHTML = '<p class="text-sm text-[var(--playarg-muted-foreground)]">暂无技能数据</p>';
+      return;
+    }
+    container.innerHTML = skills.map(function (skill) {
+      var level = Math.max(0, Math.min(100, parseInt(skill.level, 10) || 0));
+      return '<div>' +
+        '<div class="flex justify-between text-xs mb-1">' +
+          '<span class="text-[var(--playarg-muted-foreground)]">' + escapeHtml(skill.name) + '</span>' +
+          '<span class="text-[var(--playarg-primary)]">' + level + '%</span>' +
+        '</div>' +
+        '<div class="h-1.5 rounded-full bg-[var(--playarg-muted)]">' +
+          '<div class="h-1.5 rounded-full bg-[var(--playarg-primary)]" style="width: ' + level + '%"></div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderAchievements(achievements) {
+    var container = document.getElementById('achievements-container');
+    if (!container) return;
+    if (!achievements || !achievements.length) {
+      container.innerHTML = '<p class="col-span-2 text-sm text-[var(--playarg-muted-foreground)] text-center">暂无成就</p>';
+      return;
+    }
+    container.innerHTML = achievements.map(function (ach) {
+      var icon = escapeHtml(ach.icon || 'award');
+      var color = achievementColorClass(ach.icon);
+      return '<div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-muted)] p-3 text-center transition-colors hover:border-[var(--playarg-primary)]">' +
+        '<i data-lucide="' + icon + '" class="mx-auto h-6 w-6 ' + color + ' mb-1"></i>' +
+        '<p class="text-xs text-[var(--playarg-secondary-foreground)]">' + escapeHtml(ach.name) + '</p>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderSubmissions(list) {
+    var body = document.getElementById('submissions-body');
+    if (!body) return;
+    if (!list || !list.length) {
+      body.innerHTML = '<tr class="border-b border-[var(--playarg-border)] transition-colors hover:bg-[var(--playarg-muted)]"><td class="py-3 pr-4 font-mono text-[var(--playarg-muted-foreground)]" colspan="5">暂无近期提交</td></tr>';
+      return;
+    }
+    body.innerHTML = list.map(function (s) {
+      return '<tr class="border-b border-[var(--playarg-border)] transition-colors hover:bg-[var(--playarg-muted)]">' +
+        '<td class="py-3 pr-4 font-mono text-[var(--playarg-muted-foreground)]">' + escapeHtml(s.time || '') + '</td>' +
+        '<td class="py-3 pr-4">' + escapeHtml(s.problem || '') + '</td>' +
+        '<td class="py-3 pr-4"><span class="inline-flex items-center rounded px-2 py-0.5 text-xs" style="background-color: color-mix(in srgb, var(--playarg-state-success) 12%, transparent); color: var(--playarg-state-success);">' + escapeHtml(s.result || '') + '</span></td>' +
+        '<td class="py-3 pr-4 font-mono">' + escapeHtml(s.language || '') + '</td>' +
+        '<td class="py-3 pr-4 font-mono">' + escapeHtml(s.duration || '') + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  function renderContests(list) {
+    var body = document.getElementById('contests-body');
+    if (!body) return;
+    if (!list || !list.length) {
+      body.innerHTML = '<tr class="border-b border-[var(--playarg-border)] transition-colors hover:bg-[var(--playarg-muted)]"><td class="py-3 pr-4 font-mono text-[var(--playarg-muted-foreground)]" colspan="4">暂无近期比赛记录</td></tr>';
+      return;
+    }
+    body.innerHTML = list.map(function (c) {
+      return '<tr class="border-b border-[var(--playarg-border)] transition-colors hover:bg-[var(--playarg-muted)]">' +
+        '<td class="py-3 pr-4">' + escapeHtml(c.name || '') + '</td>' +
+        '<td class="py-3 pr-4 font-mono text-[var(--playarg-primary)]">' + escapeHtml(c.rank || '') + '</td>' +
+        '<td class="py-3 pr-4 font-mono">' + escapeHtml(c.score || '') + '</td>' +
+        '<td class="py-3 pr-4 font-mono text-[var(--playarg-muted-foreground)]">' + escapeHtml(c.time || '') + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  var OWNER_UID = 3;
+
+  function renderProfileActions(targetUser) {
+    var container = document.getElementById('profile-actions');
+    if (!container) return;
+
+    var isSelf = currentUser && (currentUser.id == targetUser.id);
+    var isAdmin = currentUser && currentUser.role === 'admin';
+    var isOwner = currentUser && (currentUser.id == OWNER_UID || currentUser.isOwner);
+
+    if (isSelf) {
+      container.innerHTML = '<button id="btn-edit-profile" class="inline-flex shrink-0 items-center gap-2 rounded-md bg-[var(--playarg-primary)] px-4 py-2 text-sm font-medium text-[var(--playarg-primary-foreground)] transition-all hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]"><i data-lucide="pencil" class="h-4 w-4"></i> 编辑资料</button>';
+      bindEditProfileButton();
+      return;
+    }
+
+    if (!isAdmin) {
+      container.innerHTML = '';
+      return;
+    }
+
+    var roleBtnText = targetUser.role === 'admin' ? '设为普通用户' : '设为管理员';
+    var roleBtnClass = targetUser.role === 'admin'
+      ? 'border border-[var(--playarg-border)] text-[var(--playarg-foreground)] hover:bg-[var(--playarg-muted)]'
+      : 'bg-[var(--playarg-primary)] text-[var(--playarg-primary-foreground)] hover:brightness-110';
+    var statusBtnText = targetUser.status === 'banned' ? '解封' : '封禁';
+    var statusBtnClass = targetUser.status === 'banned'
+      ? 'border border-[var(--playarg-border)] text-[var(--playarg-foreground)] hover:bg-[var(--playarg-muted)]'
+      : 'border border-[var(--playarg-state-error)]/30 text-[var(--playarg-state-error)] hover:bg-[var(--playarg-state-error)]/10';
+
+    var badgeEditor = '';
+    if (isOwner && targetUser.role === 'admin' && !targetUser.isOwner) {
+      badgeEditor =
+        '<div class="flex items-center gap-2">' +
+          '<input id="input-admin-badge" type="text" maxlength="20" placeholder="标签文字" value="' + escapeHtml(targetUser.adminBadgeText || '') + '" class="h-9 rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-3 text-sm text-[var(--playarg-foreground)] placeholder:text-[var(--playarg-muted-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />' +
+          '<button id="btn-admin-badge" class="inline-flex shrink-0 items-center gap-2 rounded-md border border-[var(--playarg-border)] px-3 py-2 text-sm font-medium text-[var(--playarg-foreground)] transition-all hover:bg-[var(--playarg-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]">设置标签</button>' +
+        '</div>';
+    }
+
+    container.innerHTML =
+      '<button id="btn-admin-role" class="inline-flex shrink-0 items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)] ' + roleBtnClass + '">' + escapeHtml(roleBtnText) + '</button>' +
+      '<button id="btn-admin-status" class="inline-flex shrink-0 items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)] ' + statusBtnClass + '">' + escapeHtml(statusBtnText) + '</button>' +
+      '<button id="btn-admin-delete" class="inline-flex shrink-0 items-center gap-2 rounded-md border border-[var(--playarg-state-error)]/30 px-4 py-2 text-sm font-medium text-[var(--playarg-state-error)] transition-all hover:bg-[var(--playarg-state-error)]/10 focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]"><i data-lucide="trash-2" class="h-4 w-4"></i> 注销用户</button>' +
+      badgeEditor;
+
+    document.getElementById('btn-admin-role').addEventListener('click', function () {
+      var newRole = targetUser.role === 'admin' ? 'user' : 'admin';
+      adminAction('/api/admin/set-role', { uid: targetUser.id, role: newRole }, function () {
+        alert('已设为' + (newRole === 'admin' ? '管理员' : '普通用户'));
+        loadProfile();
+      });
+    });
+    document.getElementById('btn-admin-status').addEventListener('click', function () {
+      var newStatus = targetUser.status === 'banned' ? 'active' : 'banned';
+      adminAction('/api/admin/set-status', { uid: targetUser.id, status: newStatus }, function () {
+        alert(newStatus === 'banned' ? '已封禁' : '已解封');
+        loadProfile();
+      });
+    });
+    document.getElementById('btn-admin-delete').addEventListener('click', function () {
+      if (!confirm('确定注销该用户？此操作不可恢复。')) return;
+      adminAction('/api/admin/delete-user', { uid: targetUser.id }, function () {
+        alert('用户已注销');
+        window.location.href = '/';
+      });
+    });
+
+    var badgeBtn = document.getElementById('btn-admin-badge');
+    if (badgeBtn) {
+      badgeBtn.addEventListener('click', function () {
+        var text = document.getElementById('input-admin-badge').value.trim();
+        adminAction('/api/admin/set-admin-badge', { uid: targetUser.id, text: text }, function () {
+          alert('标签已设置');
+          loadProfile();
+        });
+      });
+    }
+  }
+
+  function adminAction(url, body, onSuccess) {
+    fetch(url, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (json) {
+        if (json.ok) onSuccess();
+        else alert(json.error || '操作失败');
+      })
+      .catch(function () { alert('网络错误'); });
+  }
+
+  function renderAvatar(user, isSelf) {
+    var img = document.getElementById('profile-avatar-img');
+    var icon = document.getElementById('profile-avatar-icon');
+    var uploadBtn = document.getElementById('profile-avatar-upload');
+    if (!img || !icon) return;
+    if (user && user.avatar) {
+      img.src = user.avatar;
+      img.classList.remove('hidden');
+      icon.classList.add('hidden');
+    } else {
+      img.classList.add('hidden');
+      icon.classList.remove('hidden');
+    }
+    if (uploadBtn) {
+      if (isSelf) {
+        uploadBtn.classList.remove('hidden');
+        uploadBtn.classList.add('flex');
+      } else {
+        uploadBtn.classList.add('hidden');
+        uploadBtn.classList.remove('flex');
+      }
+    }
+  }
+
+  function bindAvatarUpload() {
+    var input = document.getElementById('profile-avatar-input');
+    var btn = document.getElementById('profile-avatar-upload');
+    if (btn && input) {
+      btn.addEventListener('click', function () { input.click(); });
+    }
+    if (input) {
+      input.addEventListener('change', function () {
+        var file = input.files[0];
+        if (!file) return;
+        if (file.size > 400 * 1024) { alert('图片太大，请压缩到 300KB 以下'); return; }
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var dataUrl = e.target.result;
+          if (!String(dataUrl).startsWith('data:image/')) { alert('只能上传图片'); return; }
+          fetch('/api/avatar', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ avatar: dataUrl })
+          })
+            .then(function (res) { return res.json(); })
+            .then(function (json) {
+              if (json.ok) {
+                renderAvatar(json.data, true);
+                if (currentUser) {
+                  currentUser.avatar = json.data.avatar;
+                  localStorage.setItem('playarg_user', JSON.stringify(currentUser));
+                }
+              } else {
+                alert(json.error || '上传失败');
+              }
+            })
+            .catch(function () { alert('网络错误'); });
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  }
+  bindAvatarUpload();
+
+  function loadUserStats(uid) {
+    fetch('/api/submissions?userId=' + encodeURIComponent(uid), { cache: 'no-store', credentials: 'same-origin' })
+      .then(function (res) { return res.json(); })
+      .then(function (json) {
+        var list = (json && json.ok && json.data) || [];
+        var solvedSet = {};
+        var accepted = 0;
+        list.forEach(function (s) {
+          if (s.status === 'accepted') {
+            accepted++;
+            if (s.problemId) solvedSet[s.problemId] = true;
+          }
+        });
+        var solvedCount = Object.keys(solvedSet).length;
+        var total = list.length;
+        var passRate = total ? ((accepted / total) * 100).toFixed(1) + '%' : '0.0%';
+        var solvedEl = document.getElementById('stat-solved');
+        if (solvedEl) solvedEl.textContent = solvedCount;
+        var submissionsEl = document.getElementById('stat-submissions');
+        if (submissionsEl) submissionsEl.textContent = total;
+        var passEl = document.getElementById('stat-passRate');
+        if (passEl) passEl.textContent = passRate;
+      })
+      .catch(function () {});
+  }
+
+  var editProfileModal = document.getElementById('edit-profile-modal');
+  var editProfileEmail = document.getElementById('edit-profile-email');
+  var editProfilePassword = document.getElementById('edit-profile-password');
+  var editProfilePassword2 = document.getElementById('edit-profile-password2');
+  var editProfileFeedback = document.getElementById('edit-profile-feedback');
+  var editProfileSave = document.getElementById('edit-profile-save');
+
+  function bindEditProfileButton() {
+    var btn = document.getElementById('btn-edit-profile');
+    if (!btn) return;
+    btn.addEventListener('click', openEditProfileModal);
+  }
+
+  function openEditProfileModal() {
+    editProfileEmail.value = currentUser && currentUser.email ? currentUser.email : '';
+    editProfilePassword.value = '';
+    editProfilePassword2.value = '';
+    editProfileFeedback.classList.add('hidden');
+    editProfileModal.classList.remove('hidden');
+    editProfileModal.classList.add('flex');
+  }
+
+  function closeEditProfileModal() {
+    editProfileModal.classList.add('hidden');
+    editProfileModal.classList.remove('flex');
+  }
+
+  function showEditProfileFeedback(message, type) {
+    editProfileFeedback.textContent = message;
+    editProfileFeedback.classList.remove('hidden');
+    editProfileFeedback.className = 'rounded-md border px-3 py-2 text-sm ' + (type === 'success'
+      ? 'border-[var(--playarg-state-success)]/30 bg-[var(--playarg-state-success)]/10 text-[var(--playarg-state-success)]'
+      : 'border-[var(--playarg-state-error)]/30 bg-[var(--playarg-state-error)]/10 text-[var(--playarg-state-error)]');
+  }
+
+  function submitEditProfile() {
+    var email = editProfileEmail.value.trim();
+    var password = editProfilePassword.value;
+    var password2 = editProfilePassword2.value;
+    if (!email) { showEditProfileFeedback('邮箱不能为空'); return; }
+    if (password && password !== password2) { showEditProfileFeedback('两次密码不一致'); return; }
+    editProfileSave.disabled = true;
+    fetch('/api/me', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password || undefined })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (json) {
+        editProfileSave.disabled = false;
+        if (json.ok) {
+          showEditProfileFeedback('保存成功', 'success');
+          if (currentUser) {
+            currentUser.email = email;
+            localStorage.setItem('playarg_user', JSON.stringify(currentUser));
+          }
+          setTimeout(function () {
+            closeEditProfileModal();
+            loadProfile();
+          }, 600);
+        } else {
+          showEditProfileFeedback(json.error || '保存失败');
+        }
+      })
+      .catch(function () {
+        editProfileSave.disabled = false;
+        showEditProfileFeedback('网络错误');
+      });
+  }
+
+  function bindEditProfileModal() {
+    var closeBtn = document.getElementById('edit-profile-close');
+    var cancelBtn = document.getElementById('edit-profile-cancel');
+    if (closeBtn) closeBtn.addEventListener('click', closeEditProfileModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeEditProfileModal);
+    if (editProfileSave) editProfileSave.addEventListener('click', submitEditProfile);
+  }
+  bindEditProfileModal();
+
+  function showError(message) {
+    var main = document.getElementById('main-content');
+    if (!main) return;
+    main.innerHTML = '<div class="flex min-h-[60vh] items-center justify-center p-6"><div class="rounded-[var(--playarg-radius-large)] border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-8 text-center"><i data-lucide="user-x" class="mx-auto mb-3 h-10 w-10 text-[var(--playarg-state-error)]"></i><h2 class="text-lg font-semibold text-[var(--playarg-foreground)]">' + escapeHtml(message) + '</h2><a href="/" class="mt-4 inline-flex items-center gap-2 rounded-md bg-[var(--playarg-primary)] px-4 py-2 text-sm font-medium text-[var(--playarg-primary-foreground)] hover:brightness-110">返回首页</a></div></div>';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
+
+  function loadProfile() {
+    var pathMatch = window.location.pathname.match(/\/user\/([^/]+)\/?$/);
+    var params = new URLSearchParams(window.location.search);
+    var uid = pathMatch ? pathMatch[1] : params.get('uid');
+    if (!uid) {
+      window.location.replace('/');
+      return;
+    }
+
+    fetch('/api/user?uid=' + encodeURIComponent(uid), { credentials: 'same-origin' })
+      .then(function (res) { return res.json(); })
+      .then(function (result) {
+        if (!result.ok) {
+          showError(result.error || '用户不存在');
+          return;
+        }
+        var user = result.data;
+        currentTargetUser = user;
+
+        document.title = escapeHtml(user.username) + ' - PlayARG';
+
+        var usernameEl = document.getElementById('profile-username');
+        if (usernameEl) {
+          usernameEl.textContent = user.username;
+          if (user.role === 'admin' || user.isOwner) {
+            usernameEl.classList.remove('text-[var(--playarg-primary)]');
+            usernameEl.classList.add('text-[var(--playarg-accent-purple)]');
+          } else {
+            usernameEl.classList.remove('text-[var(--playarg-accent-purple)]');
+            usernameEl.classList.add('text-[var(--playarg-primary)]');
+          }
+        }
+
+        var badgeEl = document.getElementById('profile-role-badge');
+        if (badgeEl) {
+          if (user.role === 'admin' || user.isOwner) {
+            badgeEl.textContent = escapeHtml(user.adminBadgeText || '管理员');
+            badgeEl.classList.remove('hidden');
+            badgeEl.className = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-purple-500/15 text-purple-400';
+          } else {
+            badgeEl.classList.add('hidden');
+          }
+        }
+
+        var uidEl = document.getElementById('profile-uid');
+        if (uidEl) uidEl.textContent = user.id;
+
+        var joinedEl = document.getElementById('profile-joined');
+        if (joinedEl) joinedEl.textContent = formatDate(user.joinedAt);
+
+        renderTags(user.tags);
+        renderSkills(user.skills);
+        renderAchievements(user.achievements);
+        renderSubmissions(user.recentSubmissions);
+        renderContests(user.recentContests);
+        renderProfileActions(user);
+        renderAvatar(user, currentUser && currentUser.id == user.id);
+        loadUserStats(user.id);
+
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      })
+      .catch(function () {
+        showError('加载用户资料失败');
+      });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadProfile);
+  } else {
+    loadProfile();
+  }
+})();
+</script>
+<script src="/auth.js"></script>
+
+</body>
+</html>

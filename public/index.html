@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    <link rel="apple-touch-icon" href="/assets/logo.png">
+    <title>首页 - PlayARG</title>
+    <style id="theme-vars">
+/* PlayARG — Dark geek theme tokens */
+
+:root {
+  /* Core dark surfaces */
+  --playarg-background: #0b0c10;
+  --playarg-foreground: #e8e8ec;
+  --playarg-card: #111318;
+  --playarg-card-foreground: #e8e8ec;
+  --playarg-popover: #151821;
+  --playarg-popover-foreground: #e8e8ec;
+
+  /* Primary accent — cyan/teal glow */
+  --playarg-primary: #00d9ff;
+  --playarg-primary-foreground: #030507;
+  --playarg-primary-subtle: rgba(0, 217, 255, 0.12);
+  --playarg-primary-dim: rgba(0, 217, 255, 0.06);
+
+  /* Muted / secondary */
+  --playarg-muted: #1a1d25;
+  --playarg-muted-foreground: #8a8f98;
+  --playarg-secondary: #1e212b;
+  --playarg-secondary-foreground: #d1d5db;
+
+  /* Borders & inputs */
+  --playarg-border: #2a2e3a;
+  --playarg-input: #2a2e3a;
+  --playarg-ring: rgba(0, 217, 255, 0.45);
+
+  /* Radius */
+  --playarg-radius-small: 4px;
+  --playarg-radius-medium: 8px;
+  --playarg-radius-large: 12px;
+
+  /* State colors */
+  --playarg-state-success: #22c55e;
+  --playarg-state-warning: #f59e0b;
+  --playarg-state-error: #ef4444;
+  --playarg-state-info: #3b82f6;
+
+  /* Code / data */
+  --playarg-code-bg: #0d0f14;
+  --playarg-code-fg: #e8e8ec;
+  --playarg-accent-purple: #a855f7;
+  --playarg-accent-green: #4ade80;
+
+  /* Spacing scale */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 80px;
+
+  /* Typography */
+  --font-sans: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", "Noto Sans SC", monospace;
+
+  /* Shadows */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.15);
+  --shadow-2: 0 8px 24px -8px rgba(0, 217, 255, 0.14);
+  --shadow-3: 0 24px 60px -20px rgba(0, 0, 0, 0.55);
+}
+
+@theme inline {
+  --color-background: var(--playarg-background);
+  --color-foreground: var(--playarg-foreground);
+  --color-card: var(--playarg-card);
+  --color-card-foreground: var(--playarg-card-foreground);
+  --color-popover: var(--playarg-popover);
+  --color-popover-foreground: var(--playarg-popover-foreground);
+  --color-primary: var(--playarg-primary);
+  --color-primary-foreground: var(--playarg-primary-foreground);
+  --color-secondary: var(--playarg-secondary);
+  --color-secondary-foreground: var(--playarg-secondary-foreground);
+  --color-muted: var(--playarg-muted);
+  --color-muted-foreground: var(--playarg-muted-foreground);
+  --color-border: var(--playarg-border);
+  --color-input: var(--playarg-input);
+  --color-ring: var(--playarg-ring);
+  --radius-sm: var(--playarg-radius-small);
+  --radius-md: var(--playarg-radius-medium);
+  --radius-lg: var(--playarg-radius-large);
+}
+
+/* Base */
+html,
+body {
+  font-family: var(--font-sans);
+  background: var(--playarg-background);
+  color: var(--playarg-foreground);
+  --contest-running: #0ea5e9;
+  --contest-upcoming: #22c55e;
+  --contest-ended: #e74d3c;
+  --contest-ended-text: #e74d3c;
+  --contest-ioi: #eab308;
+}
+html[data-theme='dark'] {
+  --contest-ended: #7f1d1d;
+  --contest-ended-text: #dc2626;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Glow utilities */
+.glow-text {
+  text-shadow: 0 0 18px rgba(0, 217, 255, 0.35);
+}
+
+.glow-border {
+  box-shadow: 0 0 0 1px var(--playarg-border), 0 0 18px rgba(0, 217, 255, 0.12);
+}
+
+/* Scrollbar dark */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--playarg-background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--playarg-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3f4d;
+}
+
+/* Code block base */
+pre,
+code {
+  font-family: var(--font-mono);
+}
+
+    </style>
+    <script src="/assets/tailwind.browser.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--playarg-background);
+    --color-foreground: var(--playarg-foreground);
+    --color-card: var(--playarg-card);
+    --color-card-foreground: var(--playarg-card-foreground);
+    --color-popover: var(--playarg-popover);
+    --color-popover-foreground: var(--playarg-popover-foreground);
+    --color-primary: var(--playarg-primary);
+    --color-primary-foreground: var(--playarg-primary-foreground);
+    --color-secondary: var(--playarg-secondary);
+    --color-secondary-foreground: var(--playarg-secondary-foreground);
+    --color-muted: var(--playarg-muted);
+    --color-muted-foreground: var(--playarg-muted-foreground);
+    --color-border: var(--playarg-border);
+    --color-input: var(--playarg-input);
+    --color-ring: var(--playarg-ring);
+    --radius-sm: var(--playarg-radius-small);
+    --radius-md: var(--playarg-radius-medium);
+    --radius-lg: var(--playarg-radius-large);
+  }
+  @layer base {
+    body { background: var(--playarg-background); color: var(--playarg-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--playarg-background); }
+      .text-background { color: var(--playarg-background); }
+      .border-background { border-color: var(--playarg-background); }
+      .ring-background { --tw-ring-color: var(--playarg-background); }
+      .bg-foreground { background-color: var(--playarg-foreground); }
+      .text-foreground { color: var(--playarg-foreground); }
+      .border-foreground { border-color: var(--playarg-foreground); }
+      .ring-foreground { --tw-ring-color: var(--playarg-foreground); }
+      .bg-card { background-color: var(--playarg-card); }
+      .text-card { color: var(--playarg-card); }
+      .border-card { border-color: var(--playarg-card); }
+      .ring-card { --tw-ring-color: var(--playarg-card); }
+      .bg-card-foreground { background-color: var(--playarg-card-foreground); }
+      .text-card-foreground { color: var(--playarg-card-foreground); }
+      .border-card-foreground { border-color: var(--playarg-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--playarg-card-foreground); }
+      .bg-popover { background-color: var(--playarg-popover); }
+      .text-popover { color: var(--playarg-popover); }
+      .border-popover { border-color: var(--playarg-popover); }
+      .ring-popover { --tw-ring-color: var(--playarg-popover); }
+      .bg-popover-foreground { background-color: var(--playarg-popover-foreground); }
+      .text-popover-foreground { color: var(--playarg-popover-foreground); }
+      .border-popover-foreground { border-color: var(--playarg-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--playarg-popover-foreground); }
+      .bg-primary { background-color: var(--playarg-primary); }
+      .text-primary { color: var(--playarg-primary); }
+      .border-primary { border-color: var(--playarg-primary); }
+      .ring-primary { --tw-ring-color: var(--playarg-primary); }
+      .bg-primary-foreground { background-color: var(--playarg-primary-foreground); }
+      .text-primary-foreground { color: var(--playarg-primary-foreground); }
+      .border-primary-foreground { border-color: var(--playarg-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--playarg-primary-foreground); }
+      .bg-secondary { background-color: var(--playarg-secondary); }
+      .text-secondary { color: var(--playarg-secondary); }
+      .border-secondary { border-color: var(--playarg-secondary); }
+      .ring-secondary { --tw-ring-color: var(--playarg-secondary); }
+      .bg-secondary-foreground { background-color: var(--playarg-secondary-foreground); }
+      .text-secondary-foreground { color: var(--playarg-secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--playarg-secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--playarg-secondary-foreground); }
+      .bg-muted { background-color: var(--playarg-muted); }
+      .text-muted { color: var(--playarg-muted); }
+      .border-muted { border-color: var(--playarg-muted); }
+      .ring-muted { --tw-ring-color: var(--playarg-muted); }
+      .bg-muted-foreground { background-color: var(--playarg-muted-foreground); }
+      .text-muted-foreground { color: var(--playarg-muted-foreground); }
+      .border-muted-foreground { border-color: var(--playarg-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--playarg-muted-foreground); }
+      .bg-border { background-color: var(--playarg-border); }
+      .text-border { color: var(--playarg-border); }
+      .border-border { border-color: var(--playarg-border); }
+      .ring-border { --tw-ring-color: var(--playarg-border); }
+      .bg-input { background-color: var(--playarg-input); }
+      .text-input { color: var(--playarg-input); }
+      .border-input { border-color: var(--playarg-input); }
+      .ring-input { --tw-ring-color: var(--playarg-input); }
+      .bg-ring { background-color: var(--playarg-ring); }
+      .text-ring { color: var(--playarg-ring); }
+      .border-ring { border-color: var(--playarg-ring); }
+      .ring-ring { --tw-ring-color: var(--playarg-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('playarg_theme');
+          if (t === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            document.documentElement.classList.remove('dark');
+          }
+        } catch(e) {}
+      })();
+    </script>
+</head>
+<body class="min-h-screen font-sans antialiased">
+
+<!-- Top navigation -->
+<header class="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[var(--playarg-border)] bg-[var(--playarg-background)]/90 backdrop-blur">
+  <div class="flex h-full items-center justify-between px-6">
+    <div class="flex items-center gap-3">
+      <a href="/" data-dom-id="nav-logo" class="flex items-center gap-2 text-lg font-semibold tracking-tight text-[var(--playarg-primary)] glow-text">
+        <img src="/assets/logo.png" class="h-8 w-auto rounded-md" alt="PlayARG" />
+        <span>PlayARG</span>
+      </a>
+    </div>
+    <nav class="flex items-center gap-4">
+      <a href="/rules" class="text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-foreground)]">规则</a>
+      <a href="/sponsors" class="text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-foreground)]">赞助我们</a>
+      <button data-dom-id="nav-search" class="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--playarg-border)] text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+        <i data-lucide="search" class="h-4 w-4"></i>
+      </button>
+      <a href="/messages" data-dom-id="nav-messages" class="relative flex h-9 w-9 items-center justify-center rounded-md border border-[var(--playarg-border)] text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+        <i data-lucide="mail" class="h-4 w-4"></i>
+        <span id="nav-messages-badge" class="absolute -right-1 -top-1 hidden min-w-[16px] rounded-full bg-[var(--playarg-state-error)] px-1 text-[10px] font-medium text-white"></span>
+      </a>
+      <a href="/notifications" data-dom-id="nav-notifications" class="relative flex h-9 w-9 items-center justify-center rounded-md border border-[var(--playarg-border)] text-[var(--playarg-muted-foreground)] transition-colors hover:text-[var(--playarg-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+        <i data-lucide="bell" class="h-4 w-4"></i>
+        <span id="nav-notifications-badge" class="absolute -right-1 -top-1 hidden min-w-[16px] rounded-full bg-[var(--playarg-state-error)] px-1 text-[10px] font-medium text-white"></span>
+      </a>
+      <div id="auth-root" class="relative"></div>
+    </nav>
+  </div>
+</header>
+
+<!-- Sidebar -->
+<aside class="fixed left-0 top-16 bottom-0 z-40 w-56 border-r border-[var(--playarg-border)] bg-[var(--playarg-card)]">
+  <nav class="flex flex-col gap-1 p-3">
+    <a href="/problems" data-dom-id="sidebar-problems" data-nav-key="problems" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+      <i data-lucide="book-open" class="h-[18px] w-[18px]"></i>
+      <span>题库</span>
+    </a>
+    <a href="/contests" data-dom-id="sidebar-contests" data-nav-key="contests" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+      <i data-lucide="trophy" class="h-[18px] w-[18px]"></i>
+      <span>比赛</span>
+    </a>
+    <a href="/submissions" data-dom-id="sidebar-submissions" data-nav-key="submissions" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+      <i data-lucide="terminal" class="h-[18px] w-[18px]"></i>
+      <span>提交记录</span>
+    </a>
+    <a href="/discussions" data-dom-id="sidebar-discussion" data-nav-key="discussion" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+      <i data-lucide="message-square" class="h-[18px] w-[18px]"></i>
+      <span>讨论</span>
+    </a>
+    <a href="/announcement" data-dom-id="sidebar-announcement" data-nav-key="announcement" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-[var(--playarg-muted-foreground)] transition-colors hover:bg-[var(--playarg-muted)] hover:text-[var(--playarg-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">
+      <i data-lucide="megaphone" class="h-[18px] w-[18px]"></i>
+      <span>公告</span>
+    </a>
+  </nav>
+</aside>
+
+<!-- Main content frame -->
+<main id="main-content" class="ml-56 min-h-screen bg-[var(--playarg-background)] pt-16">
+  <div class="p-6">
+    <div class="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_320px]">
+
+      <!-- Left column -->
+      <div class="flex flex-col gap-6">
+
+        <!-- Banner / AD placeholder -->
+        <section class="overflow-hidden rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)]">
+          <div id="home-banner" style="height:200px;display:flex;align-items:center;justify-content:center;background:rgba(26,29,37,0.3);">
+            <span style="font-size:14px;color:var(--playarg-muted-foreground);">管理员可设置首页 Banner</span>
+          </div>
+        </section>
+
+        <!-- ARG 比赛 -->
+        <section class="rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-5">
+          <div class="mb-4 flex items-center justify-between">
+            <h2 class="flex items-center gap-2 text-base font-semibold text-[var(--playarg-foreground)]">
+              <i data-lucide="trophy" class="h-[18px] w-[18px] text-[var(--playarg-primary)]"></i>
+              ARG 比赛
+            </h2>
+            <a href="/contests" class="text-xs text-[var(--playarg-primary)] hover:underline">查看全部</a>
+          </div>
+          <div id="home-contests">
+            <div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-8 text-center text-sm text-[var(--playarg-muted-foreground)]">加载中…</div>
+          </div>
+        </section>
+
+        <!-- 讨论 -->
+        <section class="rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-5">
+          <div class="mb-4 flex items-center justify-between">
+            <h2 class="flex items-center gap-2 text-base font-semibold text-[var(--playarg-foreground)]">
+              <i data-lucide="message-square" class="h-[18px] w-[18px] text-[var(--playarg-primary)]"></i>
+              讨论
+            </h2>
+            <a href="/discussions" class="text-xs text-[var(--playarg-primary)] hover:underline">查看全部</a>
+          </div>
+          <div id="home-discussions" class="flex flex-col gap-2">
+            <div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-8 text-center text-sm text-[var(--playarg-muted-foreground)]">加载中…</div>
+          </div>
+        </section>
+
+        <!-- 动态（犇犇） -->
+        <section class="rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-5">
+          <h2 class="mb-4 flex items-center gap-2 text-base font-semibold text-[var(--playarg-foreground)]">
+            <i data-lucide="rocket" class="h-[18px] w-[18px] text-[var(--playarg-primary)]"></i>
+            动态（犇犇）
+          </h2>
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <textarea id="feed-input" class="min-h-[80px] flex-1 resize-y rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-3 text-sm text-[var(--playarg-foreground)] placeholder:text-[var(--playarg-muted-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" placeholder="发射犇犇！"></textarea>
+            <button id="feed-submit" class="self-stretch rounded-md bg-[var(--playarg-primary)] px-4 py-2 text-sm font-medium text-[var(--playarg-primary-foreground)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)] sm:self-end sm:whitespace-nowrap">发射犇犇!</button>
+          </div>
+          <div id="feed-list" class="mt-4 flex flex-col gap-3">
+            <div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-8 text-center text-sm text-[var(--playarg-muted-foreground)]">加载中…</div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Right column widgets -->
+      <div class="flex flex-col gap-6">
+
+        <!-- 用户信息 -->
+        <section class="rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-5">
+          <div id="home-user-card" class="flex flex-col items-center gap-3 text-center">
+            <div class="flex h-16 w-16 items-center justify-center rounded-full border border-[var(--playarg-border)] bg-[var(--playarg-muted)]">
+              <i data-lucide="user" class="h-7 w-7 text-[var(--playarg-muted-foreground)]"></i>
+            </div>
+            <div>
+              <div class="text-sm font-semibold text-[var(--playarg-foreground)]">未登录</div>
+              <div class="font-mono text-xs text-[var(--playarg-muted-foreground)]">-</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 问题跳转 -->
+        <section class="rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-5">
+          <h3 class="mb-3 flex items-center gap-2 text-sm font-semibold text-[var(--playarg-foreground)]">
+            <i data-lucide="fast-forward" class="h-4 w-4 text-[var(--playarg-primary)]"></i>
+            问题跳转
+          </h3>
+          <input id="jump-input" type="text" class="h-9 w-full rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-3 text-sm text-[var(--playarg-foreground)] placeholder:text-[var(--playarg-muted-foreground)] focus:border-[var(--playarg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--playarg-ring)]" />
+          <div class="mt-3 grid grid-cols-2 gap-2">
+            <button id="btn-jump" class="h-8 rounded-md bg-[var(--playarg-primary)] text-xs font-medium text-[var(--playarg-primary-foreground)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">跳转</button>
+            <button id="btn-random" class="h-8 rounded-md border border-[var(--playarg-border)] text-xs font-medium text-[var(--playarg-foreground)] transition-colors hover:bg-[var(--playarg-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--playarg-ring)]">随机跳题</button>
+          </div>
+        </section>
+
+        <!-- 公告 -->
+        <section class="rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-5">
+          <h3 class="mb-3 flex items-center gap-2 text-sm font-semibold text-[var(--playarg-foreground)]">
+            <i data-lucide="megaphone" class="h-4 w-4 text-[var(--playarg-primary)]"></i>
+            公告
+          </h3>
+          <div id="home-announcements" class="space-y-2">
+            <div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-4 text-center text-sm text-[var(--playarg-muted-foreground)]">暂无公告</div>
+          </div>
+        </section>
+
+        <!-- 每日推题 -->
+        <section class="rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-5">
+          <h3 class="mb-3 flex items-center gap-2 text-sm font-semibold text-[var(--playarg-foreground)]">
+            <i data-lucide="calendar-check" class="h-4 w-4 text-[var(--playarg-primary)]"></i>
+            每日推题
+          </h3>
+          <div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-4 text-center text-sm text-[var(--playarg-muted-foreground)]">
+            暂无推荐
+          </div>
+        </section>
+
+        <!-- 赞助列表 & 鸣谢 -->
+        <section class="rounded-lg border border-[var(--playarg-border)] bg-[var(--playarg-card)] p-5">
+          <h3 class="mb-3 flex items-center gap-2 text-sm font-semibold text-[var(--playarg-foreground)]">
+            <i data-lucide="heart" class="h-4 w-4 text-[var(--playarg-primary)]"></i>
+            赞助列表 & 鸣谢列表
+          </h3>
+          <div id="home-sponsors" class="space-y-2">
+            <div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-4 text-center text-sm text-[var(--playarg-muted-foreground)]">暂无内容</div>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="ml-56 border-t border-[var(--playarg-border)] bg-[var(--playarg-card)] py-6">
+  <div class="px-8 text-xs text-[var(--playarg-muted-foreground)]">
+    PlayARG © 2026
+  </div>
+</footer>
+
+<script src="/auth.js"></script>
+<script>
+  (function () {
+    function escapeHtml(str) {
+      if (str == null) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function fetchData(url) {
+      return fetch(url, { cache: 'no-store' }).then(function (res) { return res.json(); });
+    }
+
+    function getBannerImageUrl(baseUrl) {
+      var theme = document.documentElement.getAttribute('data-theme');
+      if (theme === 'light') {
+        // 如果路径是 /assets/banner.jpg，自动替换为亮色版
+        if (baseUrl && baseUrl.indexOf('/assets/banner.') !== -1) {
+          return baseUrl.replace('/assets/banner.', '/assets/banner-light.');
+        }
+      }
+      return baseUrl;
+    }
+
+    function renderBanner() {
+      fetchData('/api/data?type=banner').then(function (json) {
+        var banner = (json && json.data) || {};
+        var el = document.getElementById('home-banner');
+        if (!el) return;
+        if (banner.enabled && banner.imageUrl) {
+          var imgUrl = getBannerImageUrl(banner.imageUrl);
+          el.innerHTML = '<a href="' + escapeHtml(banner.linkUrl || '#') + '" target="_blank" rel="noopener" aria-label="' + escapeHtml(banner.altText || 'Banner') + '" style="display:block;width:100%;height:200px;background-image:url(\'' + escapeHtml(imgUrl) + '\');background-size:cover;background-position:center;background-repeat:no-repeat;border-radius:inherit;transition:background-image 0.3s ease;"></a>';
+        } else {
+          el.innerHTML = '<div style="height:200px;display:flex;align-items:center;justify-content:center;background:rgba(26,29,37,0.3);"><span style="font-size:14px;color:var(--playarg-muted-foreground);">管理员可设置首页 Banner</span></div>';
+        }
+      }).catch(function (err) { console.error('[home banner]', err); });
+    }
+    renderBanner();
+    // 监听主题变化，自动切换 banner 图
+    document.addEventListener('playarg-theme-change', function (e) {
+      var bannerEl = document.querySelector('#home-banner a');
+      if (bannerEl && bannerEl.style.backgroundImage) {
+        var currentUrl = bannerEl.style.backgroundImage;
+        var newUrl;
+        if (e.detail && e.detail.theme === 'light') {
+          newUrl = currentUrl.replace('/assets/banner.', '/assets/banner-light.');
+        } else {
+          newUrl = currentUrl.replace('/assets/banner-light.', '/assets/banner.');
+        }
+        bannerEl.style.backgroundImage = newUrl;
+      }
+    });
+
+    fetchData('/api/data?type=announcements').then(function (json) {
+      console.log('[home announcements] raw json:', JSON.stringify(json).slice(0, 200));
+      var list = (json && json.data) || [];
+      console.log('[home announcements] list length:', list.length);
+      var el = document.getElementById('home-announcements');
+      if (!el) return;
+      if (!list.length) {
+        el.innerHTML = '<div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-3 text-center text-sm text-[var(--playarg-muted-foreground)]">暂无公告</div>';
+        return;
+      }
+      el.innerHTML = list.slice(0, 5).map(function (a) {
+        return '<a href="/announcement" class="block rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-3 transition-colors hover:border-[var(--playarg-primary)]/30">' +
+          '<div class="mb-1 flex items-center gap-2">' +
+          (a.pinned ? '<span class="rounded bg-[var(--playarg-primary)] px-1 py-0.5 text-[10px] font-medium text-[var(--playarg-primary-foreground)]">置顶</span>' : '') +
+          '<span class="rounded bg-[var(--playarg-muted)] px-1 py-0.5 text-[10px] text-[var(--playarg-muted-foreground)]">' + escapeHtml(a.category) + '</span>' +
+          '<span class="text-xs text-[var(--playarg-muted-foreground)]">' + escapeHtml(a.date) + '</span></div>' +
+          '<div class="truncate text-sm font-medium text-[var(--playarg-foreground)]">' + escapeHtml(a.title) + '</div>' +
+          '<div class="truncate text-xs text-[var(--playarg-muted-foreground)]">' + escapeHtml(a.content || '') + '</div></a>';
+      }).join('');
+    }).catch(function (err) { console.error('[home announcements]', err); });
+
+    fetchData('/api/data?type=sponsors').then(function (json) {
+      var list = (json && json.data) || [];
+      var el = document.getElementById('home-sponsors');
+      if (!el) return;
+      if (!list.length) {
+        el.innerHTML = '<div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-3 text-center text-sm text-[var(--playarg-muted-foreground)]">暂无内容</div>';
+        return;
+      }
+      el.innerHTML = list.map(function (s) {
+        var inner = s.url ? '<a href="' + escapeHtml(s.url) + '" target="_blank" rel="noopener" class="text-sm font-medium text-[var(--playarg-primary)] hover:underline">' + escapeHtml(s.name) + '</a>' : '<span class="text-sm font-medium text-[var(--playarg-foreground)]">' + escapeHtml(s.name) + '</span>';
+        return '<div class="flex items-center justify-between rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] px-3 py-2">' + inner + (s.level ? '<span class="rounded bg-[var(--playarg-muted)] px-1.5 py-0.5 text-xs text-[var(--playarg-muted-foreground)]">' + escapeHtml(s.level) + '</span>' : '') + '</div>';
+      }).join('');
+    }).catch(function (err) { console.error('[home sponsors]', err); });
+
+    function relativeTime(iso) {
+      var diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+      if (diff < 60) return '刚刚';
+      if (diff < 3600) return Math.floor(diff / 60) + ' 分钟前';
+      if (diff < 86400) return Math.floor(diff / 3600) + ' 小时前';
+      return Math.floor(diff / 86400) + ' 天前';
+    }
+
+    function getLocalUser() {
+      try { var raw = localStorage.getItem('playarg_user'); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+    }
+
+    function adminTag(item, keyPrefix) {
+      var isOwner = item[keyPrefix + 'IsOwner'];
+      var role = item[keyPrefix + 'Role'];
+      var badgeText = item[keyPrefix + 'AdminBadgeText'];
+      if (isOwner) return '<span class="ml-1 inline-flex items-center rounded-full bg-[var(--playarg-accent-purple)]/15 px-2 py-0.5 text-[10px] font-medium text-[var(--playarg-accent-purple)]">站主</span>';
+      if (role === 'admin') return '<span class="ml-1 inline-flex items-center rounded-full bg-[var(--playarg-accent-purple)]/15 px-2 py-0.5 text-[10px] font-medium text-[var(--playarg-accent-purple)]">' + escapeHtml(badgeText || '管理员') + '</span>';
+      return '';
+    }
+    function usernameClass(item, keyPrefix) {
+      return (item[keyPrefix + 'IsOwner'] || item[keyPrefix + 'Role'] === 'admin') ? 'text-[var(--playarg-accent-purple)]' : 'text-[var(--playarg-primary)]';
+    }
+    function userAdminTag(user) {
+      if (!user) return '';
+      if (user.isOwner) return '<span class="ml-1 inline-flex items-center rounded-full bg-[var(--playarg-accent-purple)]/15 px-2 py-0.5 text-[10px] font-medium text-[var(--playarg-accent-purple)]">站主</span>';
+      if (user.role === 'admin') return '<span class="ml-1 inline-flex items-center rounded-full bg-[var(--playarg-accent-purple)]/15 px-2 py-0.5 text-[10px] font-medium text-[var(--playarg-accent-purple)]">' + escapeHtml(user.adminBadgeText || '管理员') + '</span>';
+      return '';
+    }
+    function userNameClass(user) {
+      return (user && (user.isOwner || user.role === 'admin')) ? 'text-[var(--playarg-accent-purple)]' : 'text-[var(--playarg-primary)]';
+    }
+
+    function renderFeed(list) {
+      var el = document.getElementById('feed-list');
+      if (!el) return;
+      if (!list.length) {
+        el.innerHTML = '<div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-8 text-center text-sm text-[var(--playarg-muted-foreground)]">暂无动态，来发射第一条犇犇吧！</div>';
+        return;
+      }
+      el.innerHTML = list.map(function (item) {
+        return '<div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-3">' +
+          '<div class="mb-1 flex items-center gap-2 text-xs text-[var(--playarg-muted-foreground)]">' +
+          '<span class="font-medium ' + usernameClass(item, 'username') + '">' + escapeHtml(item.username || '匿名') + adminTag(item, 'username') + '</span>' +
+          '<span>·</span><span>' + escapeHtml(relativeTime(item.createdAt)) + '</span></div>' +
+          '<div class="text-sm text-[var(--playarg-foreground)] whitespace-pre-wrap">' + escapeHtml(item.content || '') + '</div></div>';
+      }).join('');
+    }
+
+    function loadFeed() {
+      fetchData('/api/data?type=feed').then(function (json) {
+        renderFeed((json && json.data) || []);
+      }).catch(function (err) { console.error('[home feed]', err); });
+    }
+
+    function renderUserCard(user) {
+      var el = document.getElementById('home-user-card');
+      if (!el) return;
+      if (!user) {
+        el.innerHTML = '<div class="flex h-16 w-16 items-center justify-center rounded-full border border-[var(--playarg-border)] bg-[var(--playarg-muted)]"><i data-lucide="user" class="h-7 w-7 text-[var(--playarg-muted-foreground)]"></i></div><div><div class="text-sm font-semibold text-[var(--playarg-foreground)]">未登录</div><div class="font-mono text-xs text-[var(--playarg-muted-foreground)]">-</div></div>';
+        return;
+      }
+      var roleBadge = userAdminTag(user);
+      var nameClass = userNameClass(user);
+      var avatarHtml = user.avatar
+        ? '<img src="' + escapeHtml(user.avatar) + '" alt="头像" class="h-full w-full rounded-full object-cover" />'
+        : '<i data-lucide="user" class="h-7 w-7 text-[var(--playarg-muted-foreground)]"></i>';
+      el.innerHTML = '<a href="/user/' + encodeURIComponent(user.id) + '" class="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-[var(--playarg-border)] bg-[var(--playarg-muted)] transition-colors hover:border-[var(--playarg-primary)]/30">' + avatarHtml + '</a>' +
+        '<div>' +
+          '<div class="flex items-center justify-center gap-1 text-sm font-semibold"><a href="/user/' + encodeURIComponent(user.id) + '" class="' + nameClass + ' hover:underline">' + escapeHtml(user.username) + '</a>' + roleBadge + '</div>' +
+          '<div class="font-mono text-xs text-[var(--playarg-muted-foreground)]">UID: ' + escapeHtml(user.id) + '</div>' +
+        '</div>';
+    }
+
+    function loadUserCard() {
+      fetch('/api/me', { cache: 'no-store', credentials: 'same-origin' }).then(function (res) { return res.json(); })
+        .then(function (json) {
+          if (json && json.ok && json.data) {
+            renderUserCard(json.data);
+            try { localStorage.setItem('playarg_user', JSON.stringify(json.data)); } catch (e) {}
+          } else {
+            renderUserCard(getLocalUser());
+          }
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+        })
+        .catch(function () { renderUserCard(getLocalUser()); if (typeof lucide !== 'undefined') lucide.createIcons(); });
+    }
+
+    function renderHomeDiscussions(list) {
+      var el = document.getElementById('home-discussions');
+      if (!el) return;
+      var items = (list || []).slice(0, 16);
+      if (!items.length) {
+        el.innerHTML = '<div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-6 text-center text-sm text-[var(--playarg-muted-foreground)]">暂无讨论</div>';
+        return;
+      }
+      el.innerHTML = items.map(function (d) {
+        return '<a href="/discussion/' + encodeURIComponent(d.id) + '" class="group flex items-start justify-between gap-3 rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-3 transition-colors hover:border-[var(--playarg-primary)]/30">' +
+          '<div class="min-w-0 flex-1">' +
+            '<div class="mb-1 flex flex-wrap items-center gap-2">' +
+              (d.pinned ? '<span class="rounded bg-[var(--playarg-primary)] px-1 py-0.5 text-[10px] font-medium text-[var(--playarg-primary-foreground)]">置顶</span>' : '') +
+              '<span class="truncate text-sm font-medium text-[var(--playarg-foreground)] group-hover:text-[var(--playarg-primary)]">' + escapeHtml(d.title) + '</span>' +
+            '</div>' +
+            '<div class="flex flex-wrap items-center gap-2 text-xs text-[var(--playarg-muted-foreground)]">' +
+              '<span class="font-medium ' + usernameClass(d, 'author') + '">' + escapeHtml(d.author || '匿名') + adminTag(d, 'author') + '</span>' +
+              '<span>·</span>' +
+              '<span>' + escapeHtml(relativeTime(d.createdAt)) + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="flex shrink-0 items-center gap-1 text-xs text-[var(--playarg-muted-foreground)]">' +
+            '<i data-lucide="message-circle" class="h-3.5 w-3.5"></i>' +
+            '<span>' + (d.replyCount || 0) + '</span>' +
+          '</div>' +
+        '</a>';
+      }).join('');
+    }
+
+    function loadHomeDiscussions() {
+      fetchData('/api/data?type=discussions').then(function (json) {
+        renderHomeDiscussions((json && json.data) || []);
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      }).catch(function (err) { console.error('[home discussions]', err); });
+    }
+
+    function formatDateTime(iso) {
+      var d = new Date(iso);
+      if (isNaN(d.getTime())) return iso;
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    }
+
+    function renderContests(list) {
+      var el = document.getElementById('home-contests');
+      if (!el) return;
+      var items = (list || []).slice(0, 8);
+      if (!items.length) {
+        el.innerHTML = '<div class="rounded-md border border-[var(--playarg-border)] bg-[var(--playarg-background)] p-6 text-center text-sm text-[var(--playarg-muted-foreground)]">暂无比赛</div>';
+        return;
+      }
+
+      function formatShortDate(iso) {
+        var d = new Date(iso);
+        if (isNaN(d.getTime())) return iso;
+        return (d.getMonth() + 1) + '-' + String(d.getDate()).padStart(2, '0') + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+      }
+
+      function formatCountdown(iso, status) {
+        var now = Date.now();
+        var target = new Date(iso).getTime();
+        var diff = Math.abs(target - now);
+        var d = Math.floor(diff / 86400000); diff %= 86400000;
+        var h = Math.floor(diff / 3600000); diff %= 3600000;
+        var m = Math.floor(diff / 60000);
+        if (d > 0) return d + '天' + h + '时' + m + '分';
+        if (h > 0) return h + '时' + m + '分';
+        return m + '分';
+      }
+
+      el.innerHTML = '<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">' + items.map(function (c) {
+        var org = c.organizer || {};
+        var orgName = typeof org === 'string' ? org : (org.name || '未知');
+        var orgIsAdmin = typeof org !== 'string' && org.role === 'admin';
+        var isTeam = c.isTeamContest;
+        var modeLabel = c.mode === 'ioi' ? 'IOI' : (c.mode === 'acm' ? 'ICPC' : '普通');
+
+        // Header: running=blue, upcoming=green, ended=red
+        var headerBg, headerBorder, statusTextColor;
+        if (c.status === 'running') {
+          headerBg = 'var(--contest-running)';
+          headerBorder = 'var(--contest-running)';
+          statusTextColor = 'var(--contest-running)';
+        } else if (c.status === 'upcoming') {
+          headerBg = 'var(--contest-upcoming)';
+          headerBorder = 'var(--contest-upcoming)';
+          statusTextColor = 'var(--contest-upcoming)';
+        } else {
+          headerBg = 'var(--contest-ended)';
+          headerBorder = 'var(--contest-ended)';
+          statusTextColor = 'var(--contest-ended-text)';
+        }
+
+        // Status + countdown
+        var statusLabel = '';
+        var statusColor = '';
+        var countdown = '';
+        if (c.status === 'running') {
+          statusLabel = '进行中';
+          countdown = '剩' + formatCountdown(c.endTime, c.status);
+        } else if (c.status === 'upcoming') {
+          statusLabel = '未开始';
+          countdown = formatCountdown(c.startTime, c.status) + '后';
+        } else {
+          statusLabel = '已结束';
+          countdown = '';
+        }
+
+        // Badges
+        var badges = '';
+        if (orgIsAdmin) {
+          badges += '<span class="inline-flex items-center rounded-sm bg-[var(--playarg-state-error)] px-1.5 py-0.5 text-[10px] font-bold text-white">官方比赛</span>';
+        }
+        if (isTeam) {
+          badges += '<span class="inline-flex items-center rounded-sm bg-[var(--playarg-accent-purple)] px-1.5 py-0.5 text-[10px] font-bold text-white">组队赛</span>';
+        } else {
+          badges += '<span class="inline-flex items-center rounded-sm px-1.5 py-0.5 text-[10px] font-bold text-white" style="background:var(--contest-ioi)">' + modeLabel + '</span>';
+        }
+
+        var orgColorStyle = orgIsAdmin ? 'style="color:var(--contest-running)"' : '';
+
+        return '<a href="/contest-detail?id=' + encodeURIComponent(c.id) + '" class="group overflow-hidden rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-md" style="border:2px solid ' + headerBorder + '; background:var(--playarg-card)">' +
+          '<div class="px-3 py-2 text-sm font-semibold text-white" style="background:' + headerBg + '">' +
+            '<span class="block truncate">' + escapeHtml(c.title || c.id) + '</span>' +
+          '</div>' +
+          '<div class="p-3">' +
+            '<div class="flex items-start gap-3">' +
+              '<div class="flex flex-col gap-1">' + badges + '</div>' +
+              '<div class="flex-1">' +
+                '<div class="mb-1 flex items-center gap-1.5 text-xs">' +
+                  '<span class="font-bold" style="color:' + statusTextColor + '">' + statusLabel + '</span>' +
+                  (countdown ? '<span class="text-[var(--playarg-muted-foreground)]">' + countdown + '</span>' : '') +
+                '</div>' +
+                '<div class="text-xs ' + (orgIsAdmin ? '' : 'text-[var(--playarg-muted-foreground)]') + '" ' + orgColorStyle + '>' + escapeHtml(orgName) + '</div>' +
+              '</div>' +
+              '<div class="text-right text-[11px] text-[var(--playarg-muted-foreground)]">' +
+                '<div>' + formatShortDate(c.startTime) + '</div>' +
+                '<div>' + formatShortDate(c.endTime) + '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</a>';
+      }).join('') + '</div>';
+    }
+
+    function loadContests() {
+      fetchData('/api/contests').then(function (json) {
+        renderContests((json && json.data) || []);
+      }).catch(function (err) { console.error('[home contests]', err); });
+    }
+
+    var feedSubmit = document.getElementById('feed-submit');
+    var feedInput = document.getElementById('feed-input');
+    if (feedSubmit && feedInput) {
+      feedSubmit.addEventListener('click', function () {
+        var user = getLocalUser();
+        if (!user) { alert('请先登录'); return; }
+        var content = feedInput.value.trim();
+        if (!content) { alert('内容不能为空'); return; }
+        feedSubmit.disabled = true;
+        fetch('/api/feed', { method: 'POST', cache: 'no-store', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: content }) })
+          .then(function (res) { return res.json(); })
+          .then(function (json) {
+            feedSubmit.disabled = false;
+            if (json.ok) { feedInput.value = ''; loadFeed(); }
+            else { alert(json.error || '发送失败'); }
+          })
+          .catch(function (err) { feedSubmit.disabled = false; alert('网络错误'); console.error(err); });
+      });
+    }
+    function bindProblemJump() {
+      var input = document.getElementById('jump-input');
+      var btnJump = document.getElementById('btn-jump');
+      var btnRandom = document.getElementById('btn-random');
+      if (!input || !btnJump) return;
+      function doJump() {
+        var val = input.value.trim();
+        if (!val) { input.focus(); return; }
+        location.href = '/problem-detail?id=' + encodeURIComponent(val);
+      }
+      btnJump.addEventListener('click', doJump);
+      input.addEventListener('keydown', function (e) { if (e.key === 'Enter') doJump(); });
+      if (btnRandom) {
+        btnRandom.addEventListener('click', function () {
+          fetchData('/api/data?type=problems').then(function (json) {
+            var list = (json && json.data) || [];
+            if (!list.length) { alert('题库暂无题目'); return; }
+            var p = list[Math.floor(Math.random() * list.length)];
+            location.href = '/problem-detail?id=' + encodeURIComponent(p.id);
+          }).catch(function () { alert('加载题库失败'); });
+        });
+      }
+    }
+
+    loadFeed();
+    loadUserCard();
+    loadHomeDiscussions();
+    loadContests();
+    bindProblemJump();
+  })();
+</script>
+<script>lucide.createIcons();</script>
+</body>
+</html>
