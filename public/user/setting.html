@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    <link rel="apple-touch-icon" href="/assets/logo.png">
+    <title>用户设置 - PlayARG</title>
+    <script src="/assets/tailwind.browser.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style>
+      :root {
+        --setting-bg: #f8fafc;
+        --setting-card: #ffffff;
+        --setting-foreground: #1e293b;
+        --setting-muted: #64748b;
+        --setting-border: #e2e8f0;
+        --setting-primary: #3b82f6;
+        --setting-primary-hover: #2563eb;
+        --setting-danger: #ef4444;
+        --setting-danger-hover: #dc2626;
+        --setting-tab-active: #3b82f6;
+        --setting-tab-inactive: #475569;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+        background: var(--setting-bg);
+        color: var(--setting-foreground);
+        min-height: 100vh;
+      }
+
+      /* 顶部装饰渐变背景 */
+      .setting-hero {
+        background: linear-gradient(135deg, #dbeafe 0%, #f0fdf4 100%);
+        position: relative;
+        overflow: hidden;
+      }
+      .setting-hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+          radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+          radial-gradient(circle at 80% 70%, rgba(34, 197, 94, 0.06) 0%, transparent 40%);
+        pointer-events: none;
+      }
+      .setting-hero-pattern {
+        position: absolute;
+        inset: 0;
+        opacity: 0.4;
+        background-image:
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%233b82f6' stroke-width='1' stroke-opacity='0.15'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3Cpath d='M10 80 L30 80 L25 90 Z'/%3E%3Crect x='60' y='15' width='20' height='12' rx='2'/%3E%3Cpath d='M70 50 Q80 40 90 50 Q80 60 70 50'/%3E%3Ccircle cx='85' cy='80' r='2'/%3E%3Cpath d='M5 50 L15 50 M10 45 L10 55'/%3E%3C/g%3E%3C/svg%3E");
+        background-size: 200px 200px;
+        pointer-events: none;
+      }
+
+      .setting-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 24px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .setting-title {
+        font-size: 42px;
+        font-weight: 700;
+        padding: 48px 0 32px;
+        margin: 0;
+        color: var(--setting-foreground);
+      }
+
+      /* 标签栏 */
+      .setting-tabs {
+        display: flex;
+        gap: 0;
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: -1px;
+        position: relative;
+      }
+      .setting-tab {
+        padding: 12px 20px;
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--setting-tab-inactive);
+        cursor: pointer;
+        border: none;
+        background: none;
+        position: relative;
+        transition: color 0.2s;
+      }
+      .setting-tab:hover {
+        color: var(--setting-tab-active);
+      }
+      .setting-tab.active {
+        color: var(--setting-tab-active);
+        font-weight: 600;
+      }
+      .setting-tab.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 20px;
+        right: 20px;
+        height: 3px;
+        background: var(--setting-tab-active);
+        border-radius: 2px;
+      }
+      .setting-tab.disabled {
+        color: #cbd5e1;
+        cursor: not-allowed;
+        text-decoration: line-through;
+      }
+      .setting-tab.disabled:hover {
+        color: #cbd5e1;
+      }
+
+      .tab-divider {
+        height: 3px;
+        background: rgba(59, 130, 246, 0.15);
+        margin-bottom: 24px;
+      }
+
+      /* 设置卡片 */
+      .setting-card {
+        background: var(--setting-card);
+        border-radius: 8px;
+        border: 1px solid var(--setting-border);
+        padding: 28px 32px;
+        margin-bottom: 20px;
+      }
+
+      .setting-row {
+        display: flex;
+        align-items: center;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--setting-border);
+      }
+      .setting-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+      .setting-row:first-child {
+        padding-top: 0;
+      }
+
+      .setting-label {
+        width: 140px;
+        flex-shrink: 0;
+        font-size: 17px;
+        font-weight: 600;
+        color: var(--setting-foreground);
+      }
+
+      .setting-content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .setting-desc {
+        font-size: 14px;
+        color: var(--setting-muted);
+        margin-top: 6px;
+      }
+
+      /* 头像区域 */
+      .avatar-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 0;
+      }
+      .avatar-preview {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border: 3px solid #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      .avatar-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .avatar-preview svg {
+        width: 48px;
+        height: 48px;
+        color: #fff;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px 20px;
+        font-size: 15px;
+        font-weight: 500;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s, opacity 0.2s;
+      }
+      .btn-primary {
+        background: var(--setting-primary);
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: var(--setting-primary-hover);
+      }
+      .btn-danger {
+        background: var(--setting-danger);
+        color: #fff;
+      }
+      .btn-danger:hover {
+        background: var(--setting-danger-hover);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .avatar-hint {
+        font-size: 14px;
+        color: var(--setting-muted);
+        text-align: center;
+      }
+
+      /* 表单输入 */
+      .setting-input {
+        flex: 1;
+        max-width: 320px;
+        height: 40px;
+        padding: 0 12px;
+        font-size: 14px;
+        border: 1px solid var(--setting-border);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--setting-foreground);
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      .setting-input:focus {
+        outline: none;
+        border-color: var(--setting-primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      /* 注销账户区域 */
+      .delete-account-row {
+        padding: 20px 0 4px;
+      }
+      .delete-account-label {
+        font-size: 17px;
+        font-weight: 600;
+        color: var(--setting-foreground);
+      }
+      .delete-account-desc {
+        font-size: 14px;
+        color: var(--setting-muted);
+        margin-top: 4px;
+      }
+      .delete-account-desc a {
+        color: var(--setting-primary);
+        text-decoration: none;
+      }
+      .delete-account-desc a:hover {
+        text-decoration: underline;
+      }
+      .divider-line {
+        height: 1px;
+        background: var(--setting-border);
+        margin: 8px 0;
+      }
+
+      /* 模态框 */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        backdrop-filter: blur(2px);
+      }
+      .modal-overlay.active {
+        display: flex;
+      }
+      .modal {
+        background: #fff;
+        border-radius: 12px;
+        padding: 28px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      }
+      .modal-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0 0 16px;
+        color: var(--setting-foreground);
+      }
+      .modal-desc {
+        font-size: 14px;
+        color: var(--setting-muted);
+        margin-bottom: 20px;
+        line-height: 1.6;
+      }
+      .modal-input {
+        width: 100%;
+        height: 42px;
+        padding: 0 12px;
+        font-size: 14px;
+        border: 1px solid var(--setting-border);
+        border-radius: 6px;
+        background: #fff;
+        margin-bottom: 16px;
+        transition: border-color 0.2s;
+      }
+      .modal-input:focus {
+        outline: none;
+        border-color: var(--setting-primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--setting-muted);
+        border: 1px solid var(--setting-border);
+      }
+      .btn-ghost:hover {
+        background: #f1f5f9;
+        color: var(--setting-foreground);
+      }
+
+      /* 提示消息 */
+      .toast {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 2000;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: opacity 0.3s, transform 0.3s;
+        pointer-events: none;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .toast.success {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+      }
+      .toast.error {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+      }
+
+      /* 返回链接 */
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 14px;
+        color: var(--setting-muted);
+        text-decoration: none;
+        margin-bottom: 12px;
+        transition: color 0.2s;
+      }
+      .back-link:hover {
+        color: var(--setting-primary);
+      }
+
+      @media (max-width: 640px) {
+        .setting-title { font-size: 32px; padding: 32px 0 24px; }
+        .setting-tab { font-size: 15px; padding: 10px 14px; }
+        .setting-card { padding: 20px; }
+        .setting-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+        .setting-label { width: auto; }
+        .setting-content { width: 100%; flex-wrap: wrap; }
+        .setting-input { max-width: none; width: 100%; }
+      }
+    </style>
+</head>
+<body>
+
+  <div class="setting-hero">
+    <div class="setting-hero-pattern"></div>
+    <div class="setting-container">
+      <h1 class="setting-title">用户设置</h1>
+      <nav class="setting-tabs" role="tablist">
+        <button class="setting-tab active" data-tab="profile" role="tab" aria-selected="true">个人信息</button>
+        <button class="setting-tab disabled" title="暂未开放">偏好设置</button>
+        <button class="setting-tab disabled" title="暂未开放">奖项认证</button>
+        <button class="setting-tab" data-tab="security" role="tab" aria-selected="false">安全设置</button>
+        <button class="setting-tab disabled" title="暂未开放">订单记录</button>
+      </nav>
+    </div>
+  </div>
+  <div class="tab-divider"></div>
+
+  <div class="setting-container" style="padding-bottom: 60px;">
+
+    <!-- 个人信息面板 -->
+    <div id="panel-profile" class="tab-panel">
+      <div class="setting-card">
+        <div class="setting-row" style="align-items: flex-start;">
+          <div class="setting-label">头像</div>
+          <div class="setting-content">
+            <div class="avatar-section">
+              <div class="avatar-preview" id="avatar-preview">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <button class="btn btn-primary" id="btn-avatar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                选择头像
+              </button>
+              <input type="file" id="avatar-input" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none;">
+              <p class="avatar-hint">由于缓存问题，需要强制刷新并清空缓存才能看到新头像。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 安全设置面板 -->
+    <div id="panel-security" class="tab-panel" style="display: none;">
+      <div class="setting-card">
+        <!-- 修改用户名 -->
+        <div class="setting-row">
+          <div class="setting-label">修改用户名</div>
+          <div class="setting-content">
+            <button class="btn btn-danger" id="btn-change-username">修改用户名</button>
+          </div>
+        </div>
+
+        <!-- 修改密码 -->
+        <div class="setting-row">
+          <div class="setting-label">修改密码</div>
+          <div class="setting-content">
+            <button class="btn btn-danger" id="btn-change-password">修改密码</button>
+          </div>
+        </div>
+
+        <!-- 注销账户 -->
+        <div class="setting-row delete-account-row">
+          <div class="setting-label delete-account-label">注销账户</div>
+          <div class="setting-content">
+            <p class="delete-account-desc">如需注销账户，请向<a href="/user/1" id="owner-link">站主</a>发送私信申请。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 修改用户名弹窗 -->
+  <div class="modal-overlay" id="modal-username">
+    <div class="modal">
+      <h3 class="modal-title">修改用户名</h3>
+      <p class="modal-desc">请输入新的用户名（3-20 个字符）。</p>
+      <input type="text" class="modal-input" id="input-new-username" placeholder="新用户名" maxlength="20">
+      <div class="modal-actions">
+        <button class="btn btn-ghost" data-close="modal-username">取消</button>
+        <button class="btn btn-danger" id="btn-confirm-username">确认修改</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 修改密码弹窗 -->
+  <div class="modal-overlay" id="modal-password">
+    <div class="modal">
+      <h3 class="modal-title">修改密码</h3>
+      <p class="modal-desc">请输入当前密码和新密码。</p>
+      <input type="password" class="modal-input" id="input-current-password" placeholder="当前密码">
+      <input type="password" class="modal-input" id="input-new-password" placeholder="新密码（至少 6 位）">
+      <input type="password" class="modal-input" id="input-confirm-password" placeholder="确认新密码">
+      <div class="modal-actions">
+        <button class="btn btn-ghost" data-close="modal-password">取消</button>
+        <button class="btn btn-danger" id="btn-confirm-password">确认修改</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast 提示 -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // Tab 切换
+      var tabs = document.querySelectorAll('.setting-tab[data-tab]');
+      var panels = document.querySelectorAll('.tab-panel');
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var target = tab.getAttribute('data-tab');
+          if (!target) return;
+
+          tabs.forEach(function (t) {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+          });
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
+
+          panels.forEach(function (p) {
+            p.style.display = 'none';
+          });
+          var targetPanel = document.getElementById('panel-' + target);
+          if (targetPanel) targetPanel.style.display = 'block';
+        });
+      });
+
+      // Toast
+      function showToast(msg, type) {
+        var toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.className = 'toast ' + (type || 'success');
+        toast.classList.add('show');
+        setTimeout(function () {
+          toast.classList.remove('show');
+        }, 2500);
+      }
+
+      // 模态框控制
+      function openModal(id) {
+        var m = document.getElementById(id);
+        if (m) m.classList.add('active');
+      }
+      function closeModal(id) {
+        var m = document.getElementById(id);
+        if (m) m.classList.remove('active');
+      }
+      document.querySelectorAll('[data-close]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          closeModal(btn.getAttribute('data-close'));
+        });
+      });
+      document.querySelectorAll('.modal-overlay').forEach(function (overlay) {
+        overlay.addEventListener('click', function (e) {
+          if (e.target === overlay) overlay.classList.remove('active');
+        });
+      });
+
+      // 获取当前用户
+      function getCurrentUser() {
+        try {
+          var raw = localStorage.getItem('playarg_user');
+          return raw ? JSON.parse(raw) : null;
+        } catch (e) { return null; }
+      }
+
+      // 检查登录状态
+      var currentUser = getCurrentUser();
+      if (!currentUser) {
+        // 未登录跳转
+        window.location.href = '/';
+        return;
+      }
+
+      // 渲染头像
+      function renderAvatar() {
+        var preview = document.getElementById('avatar-preview');
+        if (!preview) return;
+        if (currentUser && currentUser.avatar) {
+          preview.innerHTML = '<img src="' + currentUser.avatar + '" alt="头像">';
+        }
+      }
+      renderAvatar();
+
+      // 头像上传
+      var avatarInput = document.getElementById('avatar-input');
+      var btnAvatar = document.getElementById('btn-avatar');
+      if (btnAvatar && avatarInput) {
+        btnAvatar.addEventListener('click', function () { avatarInput.click(); });
+        avatarInput.addEventListener('change', function () {
+          var file = avatarInput.files[0];
+          if (!file) return;
+          if (file.size > 500 * 1024) {
+            showToast('图片太大，请压缩到 500KB 以下', 'error');
+            return;
+          }
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            var dataUrl = e.target.result;
+            if (!String(dataUrl).startsWith('data:image/')) {
+              showToast('只能上传图片', 'error');
+              return;
+            }
+            fetch('/api/avatar', {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ avatar: dataUrl })
+            })
+              .then(function (res) { return res.json(); })
+              .then(function (json) {
+                if (json.ok) {
+                  currentUser.avatar = json.data.avatar;
+                  localStorage.setItem('playarg_user', JSON.stringify(currentUser));
+                  renderAvatar();
+                  showToast('头像上传成功', 'success');
+                } else {
+                  showToast(json.error || '上传失败', 'error');
+                }
+              })
+              .catch(function () { showToast('网络错误', 'error'); });
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      // 修改用户名
+      var btnChangeUsername = document.getElementById('btn-change-username');
+      if (btnChangeUsername) {
+        btnChangeUsername.addEventListener('click', function () {
+          document.getElementById('input-new-username').value = currentUser.username || '';
+          openModal('modal-username');
+        });
+      }
+      var btnConfirmUsername = document.getElementById('btn-confirm-username');
+      if (btnConfirmUsername) {
+        btnConfirmUsername.addEventListener('click', function () {
+          var newName = document.getElementById('input-new-username').value.trim();
+          if (!newName) { showToast('用户名不能为空', 'error'); return; }
+          if (newName.length < 3 || newName.length > 20) {
+            showToast('用户名长度需在 3-20 个字符之间', 'error');
+            return;
+          }
+          btnConfirmUsername.disabled = true;
+          fetch('/api/me', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'change-username', username: newName })
+          })
+            .then(function (res) { return res.json(); })
+            .then(function (json) {
+              btnConfirmUsername.disabled = false;
+              if (json.ok) {
+                currentUser.username = newName;
+                localStorage.setItem('playarg_user', JSON.stringify(currentUser));
+                closeModal('modal-username');
+                showToast('用户名修改成功', 'success');
+              } else {
+                showToast(json.error || '修改失败', 'error');
+              }
+            })
+            .catch(function () {
+              btnConfirmUsername.disabled = false;
+              showToast('网络错误', 'error');
+            });
+        });
+      }
+
+      // 修改密码
+      var btnChangePassword = document.getElementById('btn-change-password');
+      if (btnChangePassword) {
+        btnChangePassword.addEventListener('click', function () {
+          document.getElementById('input-current-password').value = '';
+          document.getElementById('input-new-password').value = '';
+          document.getElementById('input-confirm-password').value = '';
+          openModal('modal-password');
+        });
+      }
+      var btnConfirmPassword = document.getElementById('btn-confirm-password');
+      if (btnConfirmPassword) {
+        btnConfirmPassword.addEventListener('click', function () {
+          var currentPwd = document.getElementById('input-current-password').value;
+          var newPwd = document.getElementById('input-new-password').value;
+          var confirmPwd = document.getElementById('input-confirm-password').value;
+
+          if (!currentPwd) { showToast('请输入当前密码', 'error'); return; }
+          if (!newPwd || newPwd.length < 6) { showToast('新密码至少 6 位', 'error'); return; }
+          if (newPwd !== confirmPwd) { showToast('两次输入的新密码不一致', 'error'); return; }
+
+          btnConfirmPassword.disabled = true;
+          fetch('/api/me', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'change-password', currentPassword: currentPwd, newPassword: newPwd })
+          })
+            .then(function (res) { return res.json(); })
+            .then(function (json) {
+              btnConfirmPassword.disabled = false;
+              if (json.ok) {
+                closeModal('modal-password');
+                showToast('密码修改成功', 'success');
+              } else {
+                showToast(json.error || '修改失败', 'error');
+              }
+            })
+            .catch(function () {
+              btnConfirmPassword.disabled = false;
+              showToast('网络错误', 'error');
+            });
+        });
+      }
+
+    })();
+  </script>
+
+</body>
+</html>
