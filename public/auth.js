@@ -1100,6 +1100,7 @@
               '<div class="font-mono text-xs text-[var(--playarg-muted-foreground)]">UID: ' + (userId || '—') + '</div>' +
             '</div>' +
             '<a id="profile-link" href="/user/' + (userId || '') + '" class="block px-4 py-2 text-sm text-[var(--playarg-foreground)] transition-colors hover:bg-[var(--playarg-muted)]">个人主页</a>' +
+            '<a href="/user/setting" class="block px-4 py-2 text-sm text-[var(--playarg-foreground)] transition-colors hover:bg-[var(--playarg-muted)]">个人设置</a>' +
             (user.role === 'admin' ?
               '<button id="admin-mode-toggle" class="w-full px-4 py-2 text-left text-sm text-[var(--playarg-accent-purple)] transition-colors hover:bg-[var(--playarg-muted)]">' +
                 (isAdminMode() ? '退出管理员模式' : '管理员模式') +
