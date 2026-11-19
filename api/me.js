@@ -8,7 +8,7 @@ function getCookieToken(cookieHeader) {
 }
 
 function hashPassword(password, salt) {
-  return crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
+  return crypto.createHmac('sha256', salt).update(password).digest('hex');
 }
 
 function readBody(req) {
@@ -55,6 +55,17 @@ module.exports = async (req, res) => {
       if (idx === -1) return send(res, 404, { ok: false, error: 'User not found' });
 
       const action = body.action || 'update';
+
+      // 验证密码（用于解锁账户）
+      if (action === 'verify-password') {
+        const password = String(body.password || '');
+        if (!password) return send(res, 400, { ok: false, error: '请输入密码' });
+        const hash = hashPassword(password, users[idx].salt || '');
+        if (hash !== users[idx].passwordHash) {
+          return send(res, 401, { ok: false, error: '密码错误' });
+        }
+        return send(res, 200, { ok: true, message: '验证通过' });
+      }
 
       // 修改用户名
       if (action === 'change-username') {

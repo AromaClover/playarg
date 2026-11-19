@@ -363,6 +363,7 @@ code {
         border: none;
         cursor: pointer;
         transition: all 0.2s;
+        text-decoration: none;
       }
       .btn-setting-primary {
         background: var(--playarg-primary);
@@ -630,7 +631,7 @@ code {
           <div class="setting-row">
             <div class="setting-label">修改用户名</div>
             <div class="setting-content">
-              <button class="btn-setting btn-setting-danger" id="btn-change-username">修改用户名</button>
+              <a href="/auth?action=change-username" class="btn-setting btn-setting-danger">修改用户名</a>
             </div>
           </div>
 
@@ -638,7 +639,7 @@ code {
           <div class="setting-row">
             <div class="setting-label">修改密码</div>
             <div class="setting-content">
-              <button class="btn-setting btn-setting-danger" id="btn-change-password">修改密码</button>
+              <a href="/auth?action=change-password" class="btn-setting btn-setting-danger">修改密码</a>
             </div>
           </div>
 
